@@ -196,7 +196,7 @@ class OmnivaltShipping extends CarrierModule
       if ($carrier->add()) {
         $groups = Group::getGroups(true);
         foreach ($groups as $group) {
-          Db::getInstance()->insert(_DB_PREFIX_ . 'carrier_group', array(
+          Db::getInstance()->insert('carrier_group', array(
             'id_carrier' => (int) $carrier->id,
             'id_group' => (int) $group['id_group']
           ));
@@ -216,11 +216,11 @@ class OmnivaltShipping extends CarrierModule
    
         $zones = Zone::getZones(true);
         foreach ($zones as $z) {
-          Db::getInstance()->insert(_DB_PREFIX_ . 'carrier_zone',
+          Db::getInstance()->insert('carrier_zone',
             array('id_carrier' => (int) $carrier->id, 'id_zone' => (int) $z['id_zone']));
-          Db::getInstance()->insert(_DB_PREFIX_ . 'delivery',
+          Db::getInstance()->insert('delivery',
             array('id_carrier' => $carrier->id, 'id_range_price' => (int) $rangePrice->id, 'id_range_weight' => NULL, 'id_zone' => (int) $z['id_zone'], 'price' => '0'), true);
-          Db::getInstance()->insert(_DB_PREFIX_ . 'delivery',
+          Db::getInstance()->insert('delivery',
             array('id_carrier' => $carrier->id, 'id_range_price' => NULL, 'id_range_weight' => (int) $rangeWeight->id, 'id_zone' => (int) $z['id_zone'], 'price' => '0'), true);
         }
    
