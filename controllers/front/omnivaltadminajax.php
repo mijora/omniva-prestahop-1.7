@@ -361,7 +361,7 @@ if( $this->labelsMix >= 4) {
         
         if(Tools::getValue('type') == 'new') {
           //send onload after manifest 
-          $this->_module->call_omniva();
+          //$this->_module->call_omniva();
           //end
           $current = intval(Configuration::get('omnivalt_manifest'));
           $current++;
