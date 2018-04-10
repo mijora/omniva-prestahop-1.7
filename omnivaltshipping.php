@@ -833,14 +833,14 @@ public function displayForm()
                           <receiverAddressee >
                              <person_name>'.$address['firstname'].' '.$address['lastname'].'</person_name>
                             '.$phones;
-                      if ( $send_method != 'pt'):
+                      // if ( $send_method != 'pt'):
                         $xmlRequest .= '
                              <address postcode="'.$address['postcode'].'" '.$parcel_terminal.' deliverypoint="'.$address['city'].'" country="'.$address['iso_code'].'" street="'.$address['address1'].'" />';
-                      else:
+                     /* else:
                         $xmlRequest .= '
                              <address '.$parcel_terminal.' />';
                       
-                      endif;
+                      endif; */
                       $xmlRequest .= ' 
                          </receiverAddressee>
                           <!--Optional:-->
