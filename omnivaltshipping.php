@@ -545,6 +545,10 @@ public function displayForm()
     if (is_array($terminals)){
       $grouped_options = array();
       foreach ($terminals as $terminal){
+        # closed ? exists on EE only
+        if (intval($terminal['TYPE'])) {
+            continue;
+        }
         if ($terminal['A0_NAME'] != $country && in_array($country,array("LT","EE","LV")))
           continue;
         if (!isset($grouped_options[$terminal['A1_NAME']]))
