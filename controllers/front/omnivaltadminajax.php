@@ -222,7 +222,7 @@ if( $this->labelsMix >= 4) {
       if($isPrinted[0]['omnivalt_manifest'] == null) {
         $currentManifest = intval(Configuration::get('omnivalt_manifest'));
         
-        $saveManifest = "UPDATE "._DB_PREFIX_."ps_cart 
+        $saveManifest = "UPDATE "._DB_PREFIX_."cart 
         SET omnivalt_manifest = ".$currentManifest."
         WHERE id_cart = (SELECT id_cart FROM "._DB_PREFIX_."orders WHERE id_order = ".$id_order.");";
         Db::getInstance(_PS_USE_SQL_SLAVE_)->execute($saveManifest);
