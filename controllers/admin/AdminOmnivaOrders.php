@@ -211,9 +211,9 @@ class AdminOmnivaOrdersController extends ModuleAdminController
 		if(Tools::getValue('orderSkip')) {
 			$orderIds = intval(Tools::getValue('orderSkip'));
 			if( $orderIds > 0) {
-			$saveManifest = "UPDATE `ps_cart` 
+			$saveManifest = "UPDATE "._DB_PREFIX_."cart 
 			SET omnivalt_manifest = -1
-			WHERE id_cart = (SELECT id_cart FROM ps_orders WHERE id_order = ".$orderIds.");";
+			WHERE id_cart = (SELECT id_cart FROM "._DB_PREFIX_."orders WHERE id_order = ".$orderIds.");";
 			Db::getInstance(_PS_USE_SQL_SLAVE_)->execute($saveManifest);
 			}
 		}
@@ -226,9 +226,9 @@ class AdminOmnivaOrdersController extends ModuleAdminController
 		if(Tools::getValue('cancelSkip')) {
 			$orderIds = intval(Tools::getValue('cancelSkip'));
 			if( $orderIds > 0) {
-			$saveManifest = "UPDATE `ps_cart` 
+			$saveManifest = "UPDATE "._DB_PREFIX_."cart 
 			SET omnivalt_manifest = null
-			WHERE id_cart = (SELECT id_cart FROM ps_orders WHERE id_order = ".$orderIds.");";
+			WHERE id_cart = (SELECT id_cart FROM "._DB_PREFIX_."orders WHERE id_order = ".$orderIds.");";
 			Db::getInstance(_PS_USE_SQL_SLAVE_)->execute($saveManifest);
 			}
 		}
@@ -240,7 +240,7 @@ class AdminOmnivaOrdersController extends ModuleAdminController
 		$new_fields2 = 'ALTER TABLE `'._DB_PREFIX_ .'cart` ADD omnivalt_manifest VARCHAR(10) default NULL';
 		DB::getInstance()->Execute($new_fields2 );
 
-		$saveManifest = "UPDATE `ps_cart` 
+		$saveManifest = "UPDATE "._DB_PREFIX_."cart 
 		SET omnivalt_manifest = -1";
 		DB::getInstance()->Execute($saveManifest );
 		

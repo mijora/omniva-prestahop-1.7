@@ -217,14 +217,14 @@ if( $this->labelsMix >= 4) {
     {
       //exit();
       $id_order = intval($id_order);
-      $sql2 = "SELECT omnivalt_manifest FROM "._DB_PREFIX_."cart WHERE id_cart = (SELECT id_cart FROM ps_orders WHERE id_order =".$id_order.")";
+      $sql2 = "SELECT omnivalt_manifest FROM "._DB_PREFIX_."cart WHERE id_cart = (SELECT id_cart FROM "._DB_PREFIX_."orders WHERE id_order =".$id_order.")";
       $isPrinted = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql2);
       if($isPrinted[0]['omnivalt_manifest'] == null) {
         $currentManifest = intval(Configuration::get('omnivalt_manifest'));
         
-        $saveManifest = "UPDATE `ps_cart` 
+        $saveManifest = "UPDATE "._DB_PREFIX_."ps_cart 
         SET omnivalt_manifest = ".$currentManifest."
-        WHERE id_cart = (SELECT id_cart FROM ps_orders WHERE id_order = ".$id_order.");";
+        WHERE id_cart = (SELECT id_cart FROM "._DB_PREFIX_."orders WHERE id_order = ".$id_order.");";
         Db::getInstance(_PS_USE_SQL_SLAVE_)->execute($saveManifest);
       }
 
@@ -242,9 +242,9 @@ if( $this->labelsMix >= 4) {
         $orderIds = trim($_REQUEST['order_ids'],',');
         $orderIds = explode(',',$orderIds);
         for($i=0;$i<count($orderIds);$i++){
-          $saveManifest = "UPDATE `ps_cart` 
+          $saveManifest = "UPDATE "._DB_PREFIX_."cart 
           SET omnivalt_manifest = '-1'
-          WHERE id_cart = (SELECT id_cart FROM ps_orders WHERE id_order = ".$orderIds[$i].");";
+          WHERE id_cart = (SELECT id_cart FROM "._DB_PREFIX_."orders WHERE id_order = ".$orderIds[$i].");";
           Db::getInstance(_PS_USE_SQL_SLAVE_)->execute($saveManifest);
         }
         //var_dump($orderIds);
@@ -360,9 +360,7 @@ if( $this->labelsMix >= 4) {
         
         
         if(Tools::getValue('type') == 'new') {
-          //send onload after manifest 
-          //$this->_module->call_omniva();
-          //end
+
           $current = intval(Configuration::get('omnivalt_manifest'));
           $current++;
           Configuration::updateValue('omnivalt_manifest', $current);
