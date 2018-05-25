@@ -118,7 +118,7 @@ class OmnivaltshippingOmnivaltadminajaxModuleFrontController extends ModuleFront
     }
     
     protected function printBulkLabels(){
-        require_once(_PS_TOOL_DIR_.'tcpdf/tcpdf.php');
+        require_once(_PS_MODULE_DIR_.'omnivaltshipping/tcpdf/tcpdf.php');
         require_once(_PS_MODULE_DIR_.'omnivaltshipping/fpdi/fpdi.php');
         $orderIds = trim($_REQUEST['order_ids'],',');
         $orderIds = explode(',',$orderIds);
@@ -256,7 +256,7 @@ if( $this->labelsMix >= 4) {
     
     protected function printBulkManifests(){
         global $cookie;
-        require_once(_PS_TOOL_DIR_.'tcpdf/tcpdf.php');
+        require_once(_PS_MODULE_DIR_.'omnivaltshipping/tcpdf/tcpdf.php');
         $orderIds = trim($_REQUEST['order_ids'],',');
         $orderIds = explode(',',$orderIds);
         OmnivaltShipping::checkForClass('OrderInfo');

@@ -33,7 +33,7 @@ class OmnivaltShipping extends CarrierModule
   {
     $this->name = 'omnivaltshipping';
     $this->tab = 'shipping_logistics';
-    $this->version = '1.0.6';
+    $this->version = '1.0.7';
     $this->author = 'Omniva.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '1.8'); 
@@ -66,7 +66,7 @@ class OmnivaltShipping extends CarrierModule
       if ($data !== false) {
         Configuration::updateValue('omnivalt_locations_update', time());
       }
-    }
+    }     
   }
   
   public function getCustomOrderState(){
@@ -313,7 +313,7 @@ class OmnivaltShipping extends CarrierModule
  
     if(Tools::isSubmit('submit'.$this->name))
     {
-        $fields = array('omnivalt_api_url','omnivalt_api_user','omnivalt_api_pass','omnivalt_send_off','omnivalt_cod','omnivalt_bank_account','omnivalt_company','omnivalt_address','omnivalt_city','omnivalt_postcode','omnivalt_countrycode','omnivalt_phone','omnivalt_pick_up_time_start','omnivalt_pick_up_time_finish');
+        $fields = array('omnivalt_api_url','omnivalt_api_user','omnivalt_api_pass','omnivalt_send_off','omnivalt_bank_account','omnivalt_company','omnivalt_address','omnivalt_city','omnivalt_postcode','omnivalt_countrycode','omnivalt_phone','omnivalt_pick_up_time_start','omnivalt_pick_up_time_finish');
         $values = array();
         $all_filled = true;
         foreach ($fields as $field){
@@ -460,18 +460,6 @@ public function displayForm()
                   'name' => 'name'
                 )
             ),
-             array(
-                'type' => 'select',
-                'lang' => true,
-                'label' => $this->l('COD'),
-                'name' => 'omnivalt_cod',
-                'required' => true,
-                'options' => array(
-                  'query' => $this->cod_options(),
-                  'id' => 'id_option', 
-                  'name' => 'name'
-                )
-            ),
         ),
         'submit' => array(
             'title' => $this->l('Save'),
@@ -512,12 +500,11 @@ public function displayForm()
     // Load current value
     $helper->fields_value['omnivalt_api_url'] = Configuration::get('omnivalt_api_url');
     if ($helper->fields_value['omnivalt_api_url'] == ""){
-      $helper->fields_value['omnivalt_api_url'] = "https://217.159.234.93";
+      $helper->fields_value['omnivalt_api_url'] = "https://edixml.post.ee/epmx/services/messagesService.wsdl";
     }
     $helper->fields_value['omnivalt_api_user'] = Configuration::get('omnivalt_api_user');
     $helper->fields_value['omnivalt_api_pass'] = Configuration::get('omnivalt_api_pass');
     $helper->fields_value['omnivalt_send_off'] = Configuration::get('omnivalt_send_off');
-    $helper->fields_value['omnivalt_cod'] = Configuration::get('omnivalt_cod');
     $helper->fields_value['omnivalt_company'] = Configuration::get('omnivalt_company');
     $helper->fields_value['omnivalt_address'] = Configuration::get('omnivalt_address');
     $helper->fields_value['omnivalt_city'] = Configuration::get('omnivalt_city');
@@ -645,10 +632,15 @@ public function displayForm()
   {
         if (in_array(Context::getContext()->controller->php_self, array('order-opc', 'order'))) {
             $this->context->controller->registerJavascript(
+            'select2',
+            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js',
+                ['server' => 'remote', 'position' => 'foot', 'priority' => 190]
+            );
+            
+            $this->context->controller->registerJavascript(
             'omnivalt',
             'modules/'.$this->name.'/views/js/omnivaltDelivery.js',
                 [
-                  'media' => 'all',
                   'priority' => 200,
                 ]
             );
@@ -666,7 +658,6 @@ public function displayForm()
   }
 
   protected static function cod($order,$cod = 0, $amount = 0) {
-    $cod_option = Configuration::get('omnivalt_cod');
     $company = Configuration::get('omnivalt_company');
     $bank_account = Configuration::get('omnivalt_bank_account');
 
@@ -943,7 +934,7 @@ public function displayForm()
   {
     $barcodes = array();;
     $errors = array();
-    $url = Configuration::get('omnivalt_api_url').'/epmx/services/messagesService.wsdl';
+    $url = Configuration::get('omnivalt_api_url');
 
       $headers = array(
         "Content-type: text/xml;charset=\"utf-8\"",
@@ -964,13 +955,13 @@ public function displayForm()
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             $xmlResponse = curl_exec($ch);
-            //var_dump($request);
+            //echo $request; exit;
             if ($xmlResponse === false) {
                 $errors[] = curl_error($ch);
             } else {
                 $errorTitle = '';
                 if (strlen(trim($xmlResponse)) > 0) {
-                  
+                  //echo $xmlResponse; exit;
                   $xmlResponse = str_ireplace(['SOAP-ENV:', 'SOAP:'], '', $xmlResponse);
                   $xml = simplexml_load_string($xmlResponse);
                   if (!is_object($xml)) {
@@ -1023,7 +1014,7 @@ public function displayForm()
         </soapenv:Envelope>';       
         //echo $xmlRequest;
         try {
-            $url = Configuration::get('omnivalt_api_url').'/epmx/services/messagesService.wsdl';
+            $url = Configuration::get('omnivalt_api_url');
             $headers = array(
                         "Content-type: text/xml;charset=\"utf-8\"",
                         "Accept: text/xml",
@@ -1100,7 +1091,7 @@ public function displayForm()
   
   public function getTracking($tracking)
   {
-        $url=Configuration::get('omnivalt_api_url').'/epteavitus/events/from/'.date("c", strtotime("-1 week +1 day")).'/for-client-code/'.Configuration::get('omnivalt_api_user');
+        $url=str_ireplace('epmx/services/messagesService.wsdl','',Configuration::get('omnivalt_api_url')).'epteavitus/events/from/'.date("c", strtotime("-1 week +1 day")).'/for-client-code/'.Configuration::get('omnivalt_api_user');
         $process = curl_init();
         $additionalHeaders = '';
         curl_setopt($process, CURLOPT_URL, $url); 

@@ -27,7 +27,7 @@ var omnivaltDelivery = {
         $('form#js-delivery').off('submit').on('submit', function(){
             return self.validate();
         });
-        $('select[name="omnivalt_parcel_terminal"]').off('change').on('change', function(e) {
+        $('select[name="omnivalt_parcel_terminal"]').off('change.Omniva').on('change.Omniva', function(e) {
             var terminal = $(this).val();
             $.ajax({
                 type: 'POST',
@@ -92,9 +92,9 @@ var omnivaltDelivery = {
 	
 //when document is loaded...
 $(document).ready(function(){
+    $('.select2').select2();
     omnivaltDelivery.init();
     $('.delivery-options .delivery-option input[type="radio"]').on('click',function(){
         omnivaltDelivery.init();
     });
-    //$('.select2').select2();
 })
