@@ -708,6 +708,11 @@ public function displayForm()
     if ($order->id_carrier == Configuration::get('omnivalt_pt') || $order->id_carrier == Configuration::get('omnivalt_c') || 1 == 1 ){
       $terminal_id = $cart->omnivalt_terminal;
       $label_url = '';
+
+      $sql = 'SELECT a.*, c.iso_code FROM '._DB_PREFIX_.'address AS a LEFT JOIN '._DB_PREFIX_.'country AS c ON c.id_country = a.id_country WHERE id_address="'.$cart->id_address_delivery.'"';
+      $address = Db::getInstance()->getRow($sql);
+      $countryCode = $address['iso_code'];
+
       if (file_exists("../modules/".$this->name.'/pdf/'.$order->id.'.pdf')){
         $label_url = Tools::getHttpHost(true).__PS_BASE_URI__.'/modules/'.$this->name.'/pdf/'.$order->id.'.pdf';
       }
@@ -719,7 +724,7 @@ public function displayForm()
             'packs'=> isset($OrderInfo['packs']) ? $OrderInfo['packs']: 1,
             'total_paid_tax_incl'=> isset($OrderInfo['cod_amount']) ? $OrderInfo['cod_amount']:$order->total_paid_tax_incl,
             'is_cod' => isset($OrderInfo['is_cod']) ? $OrderInfo['is_cod']: ($order->module == 'cashondeliveryplus' OR $order->module == 'cashondelivery'),
-            'parcel_terminals' => $this->getTerminalsOptions($terminal_id),
+            'parcel_terminals' => $this->getTerminalsOptions($terminal_id, $countryCode),
             'carriers' => $this->getCarriersOptions($cart->id_carrier),
             'order_id'=>(int)$id_order['id_order'],
             'moduleurl'=> $this->addHttps($this->context->link->getModuleLink('omnivaltshipping', 'omnivaltadminajax', array('action'=>'saveorderinfo'))), 
