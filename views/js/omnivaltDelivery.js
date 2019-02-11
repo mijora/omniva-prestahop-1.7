@@ -41,6 +41,7 @@ var omnivaltDelivery = {
                 success: function(jsonData)
                 {
                     //console.log(jsonData);
+                    selectToMap(terminal);
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     if (textStatus !== 'abort'){
