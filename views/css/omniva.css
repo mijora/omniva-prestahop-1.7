@@ -120,8 +120,8 @@
 .omniva-li:hover{
  cursor: pointer;
 }
-.omniva-terminals-list {list-style-type: upper-roman;}
-.omniva-terminals-list li {padding: 5px; border-radius: 4px; list-style-type: upper-roman;}
+.omniva-terminals-list {width: 100%;}
+.omniva-terminals-list li {padding: 5px; border-radius: 4px; /*list-style-type: upper-roman;*/list-style-type: none;}
 .omniva-terminals-list li:nth-child(even) {background: #f2f2f2;}
 
 .omniva-search {
