@@ -1,4 +1,4 @@
-<?php   
+<?php
 if (!defined('_PS_VERSION_'))
   exit;
 
@@ -6,7 +6,7 @@ class OmnivaltShipping extends CarrierModule
 {
   private $_html = '';
   private $_postErrors = array();
-  
+
   protected $_hooks = array(
     'actionCarrierUpdate', //For control change of the carrier's ID (id_carrier), the module must use the updateCarrier hook.
     'displayAdminOrderContentShip',
@@ -18,17 +18,17 @@ class OmnivaltShipping extends CarrierModule
     'displayAdminOrder',
     'displayBackOfficeHeader',
   );
-  
+
   private static $_classMap = array(
         'OrderInfo' => 'classes/OrderInfo.php',
     );
-   
+
   protected $_carriers = array(
   //"Public carrier name" => "technical name",
     'Parcel terminal' => 'omnivalt_pt',
     'Courier' => 'omnivalt_c',
   );
-  
+
   public function __construct()
   {
     $this->name = 'omnivaltshipping';
@@ -36,17 +36,17 @@ class OmnivaltShipping extends CarrierModule
     $this->version = '1.0.7';
     $this->author = 'Omniva.lt';
     $this->need_instance = 0;
-    $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '1.8'); 
+    $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '1.8');
     $this->bootstrap = true;
- 
+
     parent::__construct();
- 
+
     $this->displayName = $this->l('Omnivalt Shipping');
     $this->description = $this->l('Shipping module for Omnivalt carrier');
- 
+
     $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
- 
-    if (!Configuration::get('omnivalt_api_url'))      
+
+    if (!Configuration::get('omnivalt_api_url'))
       $this->warning = $this->l('Please set up module');
     if (!Configuration::get('omnivalt_locations_update') || (Configuration::get('omnivalt_locations_update')+24*3600) < time() || !file_exists(dirname(__file__)."/locations.json") )
     {
@@ -66,9 +66,9 @@ class OmnivaltShipping extends CarrierModule
       if ($data !== false) {
         Configuration::updateValue('omnivalt_locations_update', time());
       }
-    }     
+    }
   }
-  
+
   public function getCustomOrderState(){
     $omnivalt_order_state = (int)Configuration::get('omnivalt_order_state');
     $order_status = new OrderState((int)$omnivalt_order_state, (int)$this->context->language->id);
@@ -96,7 +96,7 @@ class OmnivaltShipping extends CarrierModule
     }
     return $omnivalt_order_state;
   }
-  
+
   public function getErrorOrderState(){
     $omnivalt_order_state = (int)Configuration::get('omnivalt_error_state');
     $order_status = new OrderState((int)$omnivalt_order_state, (int)$this->context->language->id);
@@ -124,7 +124,7 @@ class OmnivaltShipping extends CarrierModule
     }
     return $omnivalt_order_state;
   }
-  
+
   public function install()
   {
     if (parent::install()) {
@@ -171,7 +171,7 @@ class OmnivaltShipping extends CarrierModule
       $this->getErrorOrderState();
       return TRUE;
     }
-   
+
     return FALSE;
   }
 
@@ -192,7 +192,7 @@ class OmnivaltShipping extends CarrierModule
       $carrier->need_range = TRUE;
       $carrier->limited_countries = array('lt');
       $carrier->url = "https://www.omniva.lt/verslo/siuntos_sekimas?barcode=@";
-      
+
       if ($carrier->add()) {
         $groups = Group::getGroups(true);
         foreach ($groups as $group) {
@@ -201,19 +201,19 @@ class OmnivaltShipping extends CarrierModule
             'id_group' => (int) $group['id_group']
           ));
         }
-   
+
         $rangePrice = new RangePrice();
         $rangePrice->id_carrier = $carrier->id;
         $rangePrice->delimiter1 = '0';
         $rangePrice->delimiter2 = '1000';
         $rangePrice->add();
-   
+
         $rangeWeight = new RangeWeight();
         $rangeWeight->id_carrier = $carrier->id;
         $rangeWeight->delimiter1 = '0';
         $rangeWeight->delimiter2 = '1000';
         $rangeWeight->add();
-   
+
         $zones = Zone::getZones(true);
         foreach ($zones as $z) {
           Db::getInstance()->insert('carrier_zone',
@@ -223,17 +223,17 @@ class OmnivaltShipping extends CarrierModule
           Db::getInstance()->insert('delivery',
             array('id_carrier' => $carrier->id, 'id_range_price' => NULL, 'id_range_weight' => (int) $rangeWeight->id, 'id_zone' => (int) $z['id_zone'], 'price' => '0'), true);
         }
-   
+
         copy(dirname(__FILE__) . '/views/img/omnivalt-logo.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int) $carrier->id . '.jpg'); //assign carrier logo
-   
+
         Configuration::updateValue($value, $carrier->id);
         Configuration::updateValue($value . '_reference', $carrier->id);
       }
     }
-   
+
     return TRUE;
   }
-  
+
   protected function deleteCarriers()
   {
     foreach ($this->_carriers as $value) {
@@ -241,10 +241,10 @@ class OmnivaltShipping extends CarrierModule
       $carrier = new Carrier($tmp_carrier_id);
       $carrier->delete();
     }
-   
+
     return TRUE;
   }
-   
+
   public function uninstall()
   {
     if (parent::uninstall()) {
@@ -272,26 +272,26 @@ class OmnivaltShipping extends CarrierModule
       if (!$this->deleteCarriers()) {
         return FALSE;
       }
-   
+
       return TRUE;
     }
-   
+
     return FALSE;
   }
-  
+
   public function getOrderShippingCost($params, $shipping_cost)
   {
-    
+
     //if ($params->id_carrier == (int)(Configuration::get('omnivalt_pt')) || $params->id_carrier == (int)(Configuration::get('omnivalt_c')))
       return $shipping_cost;
     return false; // carrier is not known
   }
-  
+
   public function getOrderShippingCostExternal($params)
   {
     return $this->getOrderShippingCost($params, 0);
   }
-  
+
   public function hookUpdateCarrier($params)
   {
     $id_carrier_old = (int)($params['id_carrier']);
@@ -301,7 +301,7 @@ class OmnivaltShipping extends CarrierModule
     if ($id_carrier_old == (int)(Configuration::get('omnivalt_c')))
       Configuration::updateValue('omnivalt_c', $id_carrier_new);
   }
-  
+
   /*
   ** Form Config Methods
   **
@@ -310,10 +310,10 @@ class OmnivaltShipping extends CarrierModule
   public function getContent()
   {
     $output = null;
- 
+
     if(Tools::isSubmit('submit'.$this->name))
     {
-        $fields = array('omnivalt_api_url','omnivalt_api_user','omnivalt_api_pass','omnivalt_send_off','omnivalt_bank_account','omnivalt_company','omnivalt_address','omnivalt_city','omnivalt_postcode','omnivalt_countrycode','omnivalt_phone','omnivalt_pick_up_time_start','omnivalt_pick_up_time_finish');
+        $fields = array('omnivalt_map','omnivalt_api_url','omnivalt_api_user', 'omnivalt_api_pass','omnivalt_send_off','omnivalt_cod','omnivalt_bank_account','omnivalt_company','omnivalt_address','omnivalt_city','omnivalt_postcode','omnivalt_countrycode','omnivalt_phone','omnivalt_pick_up_time_start','omnivalt_pick_up_time_finish');
         $values = array();
         $all_filled = true;
         foreach ($fields as $field){
@@ -322,7 +322,7 @@ class OmnivaltShipping extends CarrierModule
             $all_filled = false;
           }
         }
-        
+
         if(!$all_filled)
           $output .= $this->displayError($this->l('All fields required'));
         else
@@ -342,15 +342,15 @@ public function cod_options() {
   );
 }
 
-  
+
 public function displayForm()
   {
     // Get default language
     $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
     $options = array(
       array(
-        'id_option' => 'pt', 
-        'name' => $this->l('Parcel terminal') 
+        'id_option' => 'pt',
+        'name' => $this->l('Parcel terminal')
       ),
       array(
         'id_option' => 'c',
@@ -456,29 +456,59 @@ public function displayForm()
                 'required' => true,
                 'options' => array(
                   'query' => $options,
-                  'id' => 'id_option', 
+                  'id' => 'id_option',
                   'name' => 'name'
                 )
             ),
+             array(
+                'type' => 'select',
+                'lang' => true,
+                'label' => $this->l('COD'),
+                'name' => 'omnivalt_cod',
+                'required' => true,
+                'options' => array(
+                  'query' => $this->cod_options(),
+                  'id' => 'id_option',
+                  'name' => 'name'
+                )
+            ),
+            array(
+              'type' => 'switch',
+              'label' => $this->l('Display map'),
+              'name' => 'omnivalt_map',
+              'is_bool' => true,
+              'values' => array(
+                  array(
+                      'id' => 'label2_on',
+                      'value' => 1,
+                      'label' => $this->l('Enabled')
+                  ),
+                  array(
+                      'id' => 'label2_off',
+                      'value' => 0,
+                      'label' => $this->l('Disabled')
+                  )
+              )
+          ),
         ),
         'submit' => array(
             'title' => $this->l('Save'),
             'class' => 'btn btn-default pull-right'
         )
     );
-     
+
     $helper = new HelperForm();
-     
+
     // Module, token and currentIndex
     $helper->module = $this;
     $helper->name_controller = $this->name;
     $helper->token = Tools::getAdminTokenLite('AdminModules');
     $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
-     
+
     // Language
     $helper->default_form_language = $default_lang;
     $helper->allow_employee_form_lang = $default_lang;
-     
+
     // Title and toolbar
     $helper->title = $this->displayName;
     $helper->show_toolbar = true;        // false -> remove toolbar
@@ -496,15 +526,18 @@ public function displayForm()
             'desc' => $this->l('Back to list')
         )
     );
-     
+
     // Load current value
     $helper->fields_value['omnivalt_api_url'] = Configuration::get('omnivalt_api_url');
     if ($helper->fields_value['omnivalt_api_url'] == ""){
       $helper->fields_value['omnivalt_api_url'] = "https://edixml.post.ee/epmx/services/messagesService.wsdl";
     }
+    $helper->fields_value['omnivalt_map'] = Configuration::get('omnivalt_map');
     $helper->fields_value['omnivalt_api_user'] = Configuration::get('omnivalt_api_user');
     $helper->fields_value['omnivalt_api_pass'] = Configuration::get('omnivalt_api_pass');
+    $helper->fields_value['omnivalt_api_google'] = Configuration::get('omnivalt_api_google');
     $helper->fields_value['omnivalt_send_off'] = Configuration::get('omnivalt_send_off');
+    $helper->fields_value['omnivalt_cod'] = Configuration::get('omnivalt_cod');
     $helper->fields_value['omnivalt_company'] = Configuration::get('omnivalt_company');
     $helper->fields_value['omnivalt_address'] = Configuration::get('omnivalt_address');
     $helper->fields_value['omnivalt_city'] = Configuration::get('omnivalt_city');
@@ -522,7 +555,7 @@ public function displayForm()
       $shop_country = new Country();
       $country = $shop_country->getIsoById(Configuration::get('PS_SHOP_COUNTRY_ID'));
     }
-      
+
     $terminals_json_file_dir = dirname(__file__)."/locations.json";
     $terminals_file = fopen($terminals_json_file_dir, "r");
     $terminals = fread($terminals_file,filesize($terminals_json_file_dir)+10);
@@ -548,7 +581,7 @@ public function displayForm()
       foreach ($grouped_options as $city=>$locs){
         $parcel_terminals .= '<optgroup label = "'.$city.'">';
         foreach ($locs as $key=>$loc){
-          $parcel_terminals .= '<option value = "'.$key.'" '.($key == $selected?'selected':'').'>'.$loc.'</option>';
+          $parcel_terminals .= '<option value = "'.$key.'" '.($key == $selected?'selected':'').'  class="omnivaOption">'.$loc.'</option>';
         }
         $parcel_terminals .= '</optgroup>';
       }
@@ -556,7 +589,43 @@ public function displayForm()
     $parcel_terminals = '<option value = "">'.$this->l('Select parcel terminal').'</option>'.$parcel_terminals;
     return $parcel_terminals;
   }
-  
+
+  /**
+   * Generate terminal list with coordinates info
+   */
+  private function getTerminalForMap($selected = '',$country = "LT")
+  {
+    if (!$country){
+      $shop_country = new Country();
+      $country = $shop_country->getIsoById(Configuration::get('PS_SHOP_COUNTRY_ID'));
+    }
+
+    $terminals_json_file_dir = dirname(__file__)."/locations.json";
+    $terminals_file = fopen($terminals_json_file_dir, "r");
+    $terminals = fread($terminals_file,filesize($terminals_json_file_dir)+10);
+    fclose($terminals_file);
+    $terminals = json_decode($terminals,true);
+    $parcel_terminals = '';
+
+    if (is_array($terminals)){
+      $terminalsList = array();
+      foreach ($terminals as $terminal){
+        if ($terminal['A0_NAME'] != $country && in_array($country,array("LT","EE","LV")) || intval($terminal['TYPE']) == 1)
+          continue;
+
+        if (!isset($grouped_options[$terminal['A1_NAME']]))
+          $grouped_options[(string)$terminal['A1_NAME']] = array();
+        $grouped_options[(string)$terminal['A1_NAME']][(string)$terminal['ZIP']] = $terminal['NAME'];
+
+        $terminalsList[] = [$terminal['NAME'], $terminal['Y_COORDINATE'], $terminal['X_COORDINATE'], $terminal['ZIP'], $terminal['A1_NAME'], $terminal['A2_NAME'], $terminal['comment_lit']];
+      }
+    }
+    return $terminalsList;
+
+  }
+
+
+
   public static function getTerminalAddress($code)
   {
     $terminals_json_file_dir = dirname(__file__)."/locations.json";
@@ -572,11 +641,11 @@ public function displayForm()
           return $terminal['NAME'].', '.$terminal['A2_NAME'].', '.$terminal['A0_NAME'];
         }
       }
-  
+
     }
     return '';
   }
-  
+
   private function getCarriersOptions($selected = ''){
     $carriers = '';
     //$carriers .= '<option value = "">'.$this->l('Select carrier').'</option>';
@@ -586,10 +655,10 @@ public function displayForm()
       if ($carrier->active || 1 == 1){
         $carriers .= '<option value = "'.Configuration::get($value).'" '.(Configuration::get($value) == $selected?'selected':'').'>'.$this->l($key).'</option>';
       }
-    } 
+    }
     return $carriers;
   }
-  
+
   public function hookDisplayBeforeCarrier($params)
   {
     $selected = '';
@@ -600,15 +669,36 @@ public function displayForm()
     }
     $sql = 'SELECT a.*, c.iso_code FROM '._DB_PREFIX_.'address AS a LEFT JOIN '._DB_PREFIX_.'country AS c ON c.id_country = a.id_country WHERE id_address="'.$params['cart']->id_address_delivery.'"';
     $address = Db::getInstance()->getRow($sql);
+
+
+    $apiKey = Configuration::get('omnivalt_map');
+    $apiKey = ($apiKey>0);
     $this->context->smarty->assign(array(
-            
+            'omniva_api_key' => $apiKey,
             'omnivalt_parcel_terminal_carrier_id' => Configuration::get('omnivalt_pt'),
             'parcel_terminals' => $this->getTerminalsOptions($selected,$address['iso_code']),
+            'terminals_list' => json_encode($this->getTerminalForMap()),
         ));
 
         return $this->display(__file__, 'displayBeforeCarrier.tpl');
   }
-  
+
+  public function hookDisplayBeforeBodyClosingTag($params)
+  {
+    $script_content_plugins = "
+    <script type=\"text/javascript\">
+      // LIUTO
+      $(document).ready(function(){
+        omnivaltDelivery.init();
+        $('.select2').select2();
+alert('hookDisplayBeforeBodyClosingTag - iskvietimas');
+      });
+    </script>"; //$this->getScriptPlugins($params);
+    $script_content_pages_views = ''; //$this->getScriptCustomerPagesViews($params);
+
+    return $script_content_plugins . $script_content_pages_views;
+  }
+
   public function hookDisplayBackOfficeHeader($params)
   {
     return '
@@ -629,29 +719,71 @@ public function displayForm()
       </script>
     ';
   }
-  
+
   public function hookHeader($params)
   {
         if (in_array(Context::getContext()->controller->php_self, array('order-opc', 'order'))) {
+
+
             $this->context->controller->registerJavascript(
-            'select2',
-            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js',
-                ['server' => 'remote', 'position' => 'foot', 'priority' => 190]
+              'fontawesome-javascript',
+              'https://use.fontawesome.com/releases/v5.7.2/js/all.js',
+              array('media' => 'all', 'priority' => 10, 'inline' => true, 'server' => 'remote')
             );
-            
             $this->context->controller->registerJavascript(
-            'omnivalt',
-            'modules/'.$this->name.'/views/js/omnivaltDelivery.js',
-                [
-                  'priority' => 200,
-                ]
+              'cdnjs-cloudflare-javascript',
+              'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js',
+              array('media' => 'all', 'priority' => 10, 'inline' => true, 'server' => 'remote')
             );
-            $this->smarty->assign('omnivalt_parcel_terminal_carrier_id', Configuration::get('omnivalt_pt'));
-            
+            $this->context->controller->registerStylesheet(
+              'cdnjs-cloudflare-CSS',
+              'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css',
+              array('media' => 'all', 'priority' => 10, 'inline' => true, 'server' => 'remote')
+            );
+/*            $this->context->controller->registerStylesheet(
+              'use-fontawesome',
+              'https://use.fontawesome.com/releases/v5.7.2/css/all.css',
+              //'https://use.fontawesome.com/releases/v5.3.1/css/all.css',
+              //"https://fonts.googleapis.com/icon?family=Material+Icons",
+              array('media' => 'all', 'priority' => 10, 'inline' => true, 'server' => 'remote')
+            );
+  */          $this->context->controller->registerStylesheet(
+              'js.arcgis-css-1',
+              'https://js.arcgis.com/4.9/esri/css/main.css',
+              array('media' => 'all', 'priority' => 10, 'inline' => true, 'server' => 'remote')
+            );
+            $this->context->controller->registerStylesheet(
+              'js.arcgis-css-2',
+              'https://js.arcgis.com/4.9/esri/themes/light/main.css',
+              array('media' => 'all', 'priority' => 10, 'inline' => true, 'server' => 'remote')
+            );
+
+            $apiKey = Configuration::get('omnivalt_map');
+            $apiKey = ($apiKey>0);
+            if($apiKey) {
+              $this->context->controller->addCSS(array( $this->_path.'views/css/omniva.css', ));
+              $this->context->controller->registerJavascript(
+                'js.arcgis-dojoId',
+                'https://js.arcgis.com/4.9/',
+                array('media' => 'all', 'priority' => 10, 'inline' => true, 'server' => 'remote')
+              );
+            }
+
+            $this->context->controller->addJS(array( $this->_path . 'views/js/esriMap.js', ));
+            $this->context->controller->addJS(array( $this->_path . 'views/js/omnivaltDelivery.js', ));
+            $locations = ($this->getTerminalForMap());
+            Media::addJsDef(array('omnivaltshipping' => json_encode(array('locations' => $locations)), ));
+
+
+            $this->smarty->assign(array(
+              'omniva_api_key' => $apiKey,
+              'omnivalt_parcel_terminal_carrier_id'=> Configuration::get('omnivalt_pt')
+            ));
+
             return $this->display(__FILE__, 'header.tpl');
         }
   }
-  
+
   public function hookActionCarrierProcess($params){
     if (isset($_POST['omnivalt_parcel_terminal']) && $params['cart']->id_carrier == Configuration::get('omnivalt_pt')){
       $terminal_id = $_POST['omnivalt_parcel_terminal'];
@@ -674,9 +806,9 @@ public function displayForm()
     } else {
       return '';
     }
-    
+
   }
-  
+
   protected static function getReferenceNumber($order_number)
   {
       $order_number = (string)$order_number;
@@ -689,7 +821,7 @@ public function displayForm()
       $kontrollnr = ((ceil(($total/10))*10)-$total);
       return $order_number.$kontrollnr;
   }
-  
+
   public function changeOrderStatus($id_order,$status){
     $order = new Order((int)$id_order);
     if($order->current_state != $status)// && $order->current_state != Configuration::get('PS_OS_SHIPPING'))
@@ -701,7 +833,7 @@ public function displayForm()
       $history->addWithemail(true);
     }
   }
-  
+
   public function hookDisplayAdminOrder($id_order)
   {
     $order = new Order((int)$id_order['id_order']);
@@ -729,18 +861,18 @@ public function displayForm()
             'parcel_terminals' => $this->getTerminalsOptions($terminal_id, $countryCode),
             'carriers' => $this->getCarriersOptions($cart->id_carrier),
             'order_id'=>(int)$id_order['id_order'],
-            'moduleurl'=> $this->addHttps($this->context->link->getModuleLink('omnivaltshipping', 'omnivaltadminajax', array('action'=>'saveorderinfo'))), 
-            'printlabelsurl'=> $this->addHttps($this->context->link->getModuleLink('omnivaltshipping', 'omnivaltadminajax', array('action'=>'printlabels'))), 
+            'moduleurl'=> $this->addHttps($this->context->link->getModuleLink('omnivaltshipping', 'omnivaltadminajax', array('action'=>'saveorderinfo'))),
+            'printlabelsurl'=> $this->addHttps($this->context->link->getModuleLink('omnivaltshipping', 'omnivaltadminajax', array('action'=>'printlabels'))),
             'omnivalt_parcel_terminal_carrier_id' => Configuration::get('omnivalt_pt'),
             'label_url' => $label_url,
             'error' => $OrderInfo['error'],
         ));
       $form = $this->display(__FILE__, 'blockinorder.tpl');
-      
+
       return $form;
     }
   }
-  
+
   private function addHttps($url){
     if (empty($_SERVER['HTTPS'])) {
       return $url;
@@ -750,10 +882,10 @@ public function displayForm()
       return $url;
     }
   }
-  
-  
+
+
   public static function get_tracking_number($id_order, $onload = false){
-    
+
     self::checkForClass('OrderInfo');
     $orderInfo = new OrderInfo();
     $orderInfo = $orderInfo->getOrderInfo($id_order);
@@ -795,8 +927,8 @@ public function displayForm()
         if ($service == "PA" || $service == "PU")
             $additionalService .= '<option code="ST" />';
         if ($orderInfo['is_cod'])
-            $additionalService .= '<option code="BP" />';        
-                
+            $additionalService .= '<option code="BP" />';
+
         if ($additionalService ){
           $additionalService  = '<add_service>'.$additionalService.'</add_service>';
         }
@@ -812,7 +944,7 @@ public function displayForm()
         $pickDay = date('Y-m-d');
         if (time() > strtotime($pickDay.' '.$pickFinish))
           $pickDay = date('Y-m-d',strtotime($pickDay . "+1 days"));
-        
+
         $shop_country = new Country();
         $shop_country_iso = $shop_country->getIsoById(Configuration::get('PS_SHOP_COUNTRY_ID'));
         $xmlRequest = '
@@ -822,7 +954,7 @@ public function displayForm()
               <xsd:businessToClientMsgRequest>
                  <partner>'.Configuration::get('omnivalt_api_user').'</partner>
                  <interchange msg_type="info11">
-                    <header file_id="'.\Date('YmdHms').'" sender_cd="'.Configuration::get('omnivalt_api_user').'" >                
+                    <header file_id="'.\Date('YmdHms').'" sender_cd="'.Configuration::get('omnivalt_api_user').'" >
                     </header>
                     <item_list>
                       ';
@@ -841,9 +973,9 @@ public function displayForm()
                      /* else:
                         $xmlRequest .= '
                              <address '.$parcel_terminal.' />';
-                      
+
                       endif; */
-                      $xmlRequest .= ' 
+                      $xmlRequest .= '
                          </receiverAddressee>
                           <!--Optional:-->
                           <returnAddressee>
@@ -851,7 +983,7 @@ public function displayForm()
                              <!--Optional:-->
                              <phone>'.Configuration::get('omnivalt_phone').'</phone>
                              <address postcode="'.Configuration::get('omnivalt_postcode').'" deliverypoint="'.Configuration::get('omnivalt_city').'" country="'.Configuration::get('omnivalt_countrycode').'" street="'.Configuration::get('omnivalt_address').'" />
-                          
+
                           </returnAddressee>';
                           $xmlRequest .= '</item>';
                        endfor;
@@ -866,13 +998,13 @@ public function displayForm()
         //error_log($xmlRequest);
         return self::api_request($xmlRequest);
   }
-  
+
   public static function call_omniva(){
-    
- 
+
+
         $service = "QH";
-        $additionalService = '';    
-                
+        $additionalService = '';
+
         if ($additionalService ){
           $additionalService  = '<add_service>'.$additionalService.'</add_service>';
         }
@@ -883,7 +1015,7 @@ public function displayForm()
         $pickDay = date('Y-m-d');
         if (time() > strtotime($pickDay.' '.$pickFinish))
           $pickDay = date('Y-m-d',strtotime($pickDay . "+1 days"));
-        
+
         $shop_country = new Country();
         $shop_country_iso = $shop_country->getIsoById(Configuration::get('PS_SHOP_COUNTRY_ID'));
         $xmlRequest = '
@@ -893,7 +1025,7 @@ public function displayForm()
               <xsd:businessToClientMsgRequest>
                  <partner>'.Configuration::get('omnivalt_api_user').'</partner>
                  <interchange msg_type="info11">
-                    <header file_id="'.\Date('YmdHms').'" sender_cd="'.Configuration::get('omnivalt_api_user').'" >                
+                    <header file_id="'.\Date('YmdHms').'" sender_cd="'.Configuration::get('omnivalt_api_user').'" >
                     </header>
                     <item_list>
                       ';
@@ -913,7 +1045,7 @@ public function displayForm()
                              <!--Optional:-->
                              <phone>'.Configuration::get('omnivalt_phone').'</phone>
                              <address postcode="'.Configuration::get('omnivalt_postcode').'" deliverypoint="'.Configuration::get('omnivalt_city').'" country="'.Configuration::get('omnivalt_countrycode').'" street="'.Configuration::get('omnivalt_address').'" />
-                          
+
                           </returnAddressee>';
                           $xmlRequest .= '
                           <onloadAddressee>
@@ -924,7 +1056,7 @@ public function displayForm()
                             <pick_up_time start="'.date("c", strtotime($pickDay.' '.$pickStart)).'" finish="'.date("c", strtotime($pickDay.' '.$pickFinish)).'"/>
                           </onloadAddressee>';
                        $xmlRequest .= '</item>';
-                      endfor; 
+                      endfor;
                        $xmlRequest .= '
                     </item_list>
                  </interchange>
@@ -936,7 +1068,7 @@ public function displayForm()
         //error_log($xmlRequest);
         return self::api_request($xmlRequest);
   }
-  
+
   public static function api_request($request)
   {
     $barcodes = array();;
@@ -949,7 +1081,7 @@ public function displayForm()
         "Cache-Control: no-cache",
         "Pragma: no-cache",
         "Content-length: ".strlen($request),
-      ); 
+      );
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -986,7 +1118,7 @@ public function displayForm()
                             }
                         }
                     }
-                   
+
                 }
             }
        // }
@@ -1018,7 +1150,7 @@ public function displayForm()
                  </barcodes>
               </xsd:addrcardMsgRequest>
            </soapenv:Body>
-        </soapenv:Envelope>';       
+        </soapenv:Envelope>';
         //echo $xmlRequest;
         try {
             $url = Configuration::get('omnivalt_api_url');
@@ -1028,7 +1160,7 @@ public function displayForm()
                         "Cache-Control: no-cache",
                         "Pragma: no-cache",
                         "Content-length: ".strlen($xmlRequest),
-                    ); 
+                    );
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -1051,15 +1183,15 @@ public function displayForm()
         if (!is_object($xml)) {
            $errors[] = self::l('Response is in the wrong format');
         }
-        
+
             if (is_object($xml) && is_object($xml->Body->addrcardMsgResponse->successAddressCards->addressCardData->barcode)) {
                 $shippingLabelContent = (string)$xml->Body->addrcardMsgResponse->successAddressCards->addressCardData->fileData;
                 file_put_contents(_PS_MODULE_DIR_."/omnivaltshipping/pdf/".$order_id.'.pdf', base64_decode($shippingLabelContent));
-              
+
             } else {
                 $errors[] = 'No label received from webservice';
             }
-        
+
 
         if (!empty($errors)) {
             return array('status'=>false,'msg' => implode('. ',$errors));
@@ -1070,9 +1202,9 @@ public function displayForm()
             return array('status'=>false,'msg' => implode('. ',$errors));
         }
   }
-  
+
   public function hookOrderDetailDisplayed($params){
-    
+
     if ($params['order']->getWsShippingNumber() && ($params['order']->id_carrier == Configuration::get('omnivalt_pt') || $params['order']->id_carrier == Configuration::get('omnivalt_c'))){
       $sql = 'SELECT c.iso_code FROM '._DB_PREFIX_.'address AS a LEFT JOIN '._DB_PREFIX_.'country AS c ON c.id_country = a.id_country WHERE id_address="'.$params['order']->id_address_delivery.'"';
       $address = Db::getInstance()->getRow($sql);
@@ -1090,18 +1222,18 @@ public function displayForm()
                   'priority' => 200,
                 ]
             );
-      
+
       return $this->display(__file__, 'trackingInfo.tpl');
     }
     return '';
   }
-  
+
   public function getTracking($tracking)
   {
         $url=str_ireplace('epmx/services/messagesService.wsdl','',Configuration::get('omnivalt_api_url')).'epteavitus/events/from/'.date("c", strtotime("-1 week +1 day")).'/for-client-code/'.Configuration::get('omnivalt_api_user');
         $process = curl_init();
         $additionalHeaders = '';
-        curl_setopt($process, CURLOPT_URL, $url); 
+        curl_setopt($process, CURLOPT_URL, $url);
         curl_setopt($process, CURLOPT_HTTPHEADER, array('Content-Type: application/xml', $additionalHeaders));
         curl_setopt($process, CURLOPT_HEADER, FALSE);
         curl_setopt($process, CURLOPT_USERPWD, Configuration::get('omnivalt_api_user') . ":" . Configuration::get('omnivalt_api_pass'));
@@ -1116,8 +1248,8 @@ public function displayForm()
           return false;
         }
         return $this->parseXmlTrackingResponse($tracking, $return);
-  }  
-  
+  }
+
   public function parseXmlTrackingResponse($trackings, $response)
   {
     $errors = array();
@@ -1132,25 +1264,25 @@ public function displayForm()
             if (is_object($xml) && is_object($xml->event)) {
                 foreach ($xml->event as $awbinfo) {
                     $awbinfoData = [];
-                    
+
                     $trackNum = isset($awbinfo->packetCode) ? (string)$awbinfo->packetCode : '';
-                    
+
                     if (!in_array($trackNum,$trackings))
                         continue;
                     //$this->_debug($awbinfo);
                     $packageProgress = [];
                     if (isset($resultArr[$trackNum]['progressdetail']))
                       $packageProgress = $resultArr[$trackNum]['progressdetail'];
-                   
+
                     $shipmentEventArray = [];
                     $shipmentEventArray['activity'] = $this->getEventCode((string)$awbinfo->eventCode);
-                    
+
                     $shipmentEventArray['deliverydate'] = DateTime::createFromFormat('U', strtotime($awbinfo->eventDate));
                     $shipmentEventArray['deliverylocation'] = $awbinfo->eventSource;
                     $packageProgress[] = $shipmentEventArray;
-                        
+
                     $awbinfoData['progressdetail'] = $packageProgress;
-                    
+
                     $resultArr[$trackNum] = $awbinfoData;
                 }
             }
@@ -1172,7 +1304,7 @@ public function displayForm()
         }
         return $resultArr;
   }
-  
+
   public function getEventCode($code){
     $tracking = [
                 'PACKET_EVENT_IPS_C' => $this->l("Shipment from country of departure"),
@@ -1235,7 +1367,7 @@ public function displayForm()
       return $tracking[$code];
     return '';
   }
-  
+
   public static function checkForClass($className){
         if(!class_exists($className)){
             if(isset(self::$_classMap[$className])){

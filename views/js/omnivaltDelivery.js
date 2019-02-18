@@ -5,14 +5,14 @@ var omnivaltDelivery = {
             var $this = $(this),
                 value = $this.val(),
                 carrierIds = value.split(',');
-            
+
             if (value != omnivalt_parcel_terminal_carrier_id + ',') {
                 return;
             }
-            
+
             var $omnivaltItem = $this.closest('.delivery-option');
             var omnivaltLocation = $omnivaltItem.find('label');
-            
+
             //$(".delivery_option #omnivalt_parcel_terminal_carrier_details").remove();
             $("#hook-display-before-carrier #omnivalt_parcel_terminal_carrier_details").appendTo(omnivaltLocation);
             //$("#HOOK_BEFORECARRIER #omnivalt_parcel_terminal_carrier_details").remove();
@@ -23,7 +23,7 @@ var omnivaltDelivery = {
         } else {
             $("#omnivalt_parcel_terminal_carrier_details").hide();
         }
-        
+
         $('form#js-delivery').off('submit').on('submit', function(){
             return self.validate();
         });
@@ -41,6 +41,7 @@ var omnivaltDelivery = {
                 success: function(jsonData)
                 {
                     //console.log(jsonData);
+                    selectToMap(terminal);
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     if (textStatus !== 'abort'){
@@ -89,7 +90,7 @@ var omnivaltDelivery = {
         return false;
     },
 }
-	
+
 //when document is loaded...
 $(document).ready(function(){
     $('.select2').select2();
@@ -97,4 +98,6 @@ $(document).ready(function(){
     $('.delivery-options .delivery-option input[type="radio"]').on('click',function(){
         omnivaltDelivery.init();
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
 })
