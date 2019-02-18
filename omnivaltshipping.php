@@ -313,7 +313,7 @@ class OmnivaltShipping extends CarrierModule
  
     if(Tools::isSubmit('submit'.$this->name))
     {
-        $fields = array('omnivalt_api_url','omnivalt_api_user','omnivalt_api_pass','omnivalt_send_off','omnivalt_bank_account','omnivalt_company','omnivalt_address','omnivalt_city','omnivalt_postcode','omnivalt_countrycode','omnivalt_phone','omnivalt_pick_up_time_start','omnivalt_pick_up_time_finish');
+        $fields = array('omnivalt_map', 'omnivalt_api_url','omnivalt_api_user','omnivalt_api_pass','omnivalt_send_off','omnivalt_bank_account','omnivalt_company','omnivalt_address','omnivalt_city','omnivalt_postcode','omnivalt_countrycode','omnivalt_phone','omnivalt_pick_up_time_start','omnivalt_pick_up_time_finish');
         $values = array();
         $all_filled = true;
         foreach ($fields as $field){
@@ -460,6 +460,24 @@ public function displayForm()
                   'name' => 'name'
                 )
             ),
+            array(
+              'type' => 'switch',
+              'label' => $this->l('Display map'),
+              'name' => 'omnivalt_map',
+              'is_bool' => true,
+              'values' => array(
+                  array(
+                      'id' => 'label2_on',
+                      'value' => 1,
+                      'label' => $this->l('Enabled')
+                  ),
+                  array(
+                      'id' => 'label2_off',
+                      'value' => 0,
+                      'label' => $this->l('Disabled')
+                  )
+              )
+          ),
         ),
         'submit' => array(
             'title' => $this->l('Save'),
@@ -514,6 +532,7 @@ public function displayForm()
     $helper->fields_value['omnivalt_bank_account'] = Configuration::get('omnivalt_bank_account');
     $helper->fields_value['omnivalt_pick_up_time_start'] = Configuration::get('omnivalt_pick_up_time_start')?Configuration::get('omnivalt_pick_up_time_start'):'8:00';
     $helper->fields_value['omnivalt_pick_up_time_finish'] = Configuration::get('omnivalt_pick_up_time_finish')?Configuration::get('omnivalt_pick_up_time_finish'):'17:00';
+    $helper->fields_value['omnivalt_map'] = Configuration::get('omnivalt_map');
     return $helper->generateForm($fields_form);
   }
   private function getTerminalsOptions($selected = '',$country = "")
@@ -548,7 +567,7 @@ public function displayForm()
       foreach ($grouped_options as $city=>$locs){
         $parcel_terminals .= '<optgroup label = "'.$city.'">';
         foreach ($locs as $key=>$loc){
-          $parcel_terminals .= '<option value = "'.$key.'" '.($key == $selected?'selected':'').'>'.$loc.'</option>';
+          $parcel_terminals .= '<option value = "'.$key.'" '.($key == $selected?'selected':'').'  class="omnivaOption">'.$loc.'</option>';
         }
         $parcel_terminals .= '</optgroup>';
       }
@@ -557,6 +576,37 @@ public function displayForm()
     return $parcel_terminals;
   }
   
+  /**
+   * Generate terminal list with coordinates info
+   */
+  private function getTerminalForMap($selected = '',$country = "LT")
+  {
+    if (!$country){
+      $shop_country = new Country();
+      $country = $shop_country->getIsoById(Configuration::get('PS_SHOP_COUNTRY_ID'));
+    }
+      
+    $terminals_json_file_dir = dirname(__file__)."/locations.json";
+    $terminals_file = fopen($terminals_json_file_dir, "r");
+    $terminals = fread($terminals_file,filesize($terminals_json_file_dir)+10);
+    fclose($terminals_file);
+    $terminals = json_decode($terminals,true);
+    $parcel_terminals = '';
+    if (is_array($terminals)){
+      $terminalsList = array();
+      foreach ($terminals as $terminal){
+        if ($terminal['A0_NAME'] != $country && in_array($country,array("LT","EE","LV")) || intval($terminal['TYPE']) == 1)
+          continue;
+        if (!isset($grouped_options[$terminal['A1_NAME']]))
+          $grouped_options[(string)$terminal['A1_NAME']] = array();
+        $grouped_options[(string)$terminal['A1_NAME']][(string)$terminal['ZIP']] = $terminal['NAME'];
+      
+        $terminalsList[] = [$terminal['NAME'], $terminal['Y_COORDINATE'], $terminal['X_COORDINATE'], $terminal['ZIP'], $terminal['A1_NAME'], $terminal['A2_NAME'], $terminal['comment_lit']];
+      }
+    }
+    return $terminalsList;
+  }
+
   public static function getTerminalAddress($code)
   {
     $terminals_json_file_dir = dirname(__file__)."/locations.json";
@@ -600,10 +650,16 @@ public function displayForm()
     }
     $sql = 'SELECT a.*, c.iso_code FROM '._DB_PREFIX_.'address AS a LEFT JOIN '._DB_PREFIX_.'country AS c ON c.id_country = a.id_country WHERE id_address="'.$params['cart']->id_address_delivery.'"';
     $address = Db::getInstance()->getRow($sql);
+    $apiKey = Configuration::get('omnivalt_map');
+    $apiKey = ($apiKey>0);
     $this->context->smarty->assign(array(
             
             'omnivalt_parcel_terminal_carrier_id' => Configuration::get('omnivalt_pt'),
             'parcel_terminals' => $this->getTerminalsOptions($selected,$address['iso_code']),
+            'omniva_api_key' => $apiKey,
+            'terminals_list' => json_encode($this->getTerminalForMap()),
+            'terminals_list2' => $this->getTerminalForMap(),
+
         ));
 
         return $this->display(__file__, 'displayBeforeCarrier.tpl');
@@ -639,6 +695,35 @@ public function displayForm()
                 ['server' => 'remote', 'position' => 'foot', 'priority' => 190]
             );
             
+            $apiKey = Configuration::get('omnivalt_map');
+            $apiKey = ($apiKey>0);
+            if ($apiKey) {
+                $this->context->controller->registerStylesheet(
+                  'fontscss',
+                  'https://use.fontawesome.com/releases/v5.3.1/css/all.css',
+                  array('server' => 'remote', 'position' => 'bottom', 'priority' => 190)
+                );
+                $this->context->controller->addCSS(array( 'https://use.fontawesome.com/releases/v5.3.1/css/all.css', ));
+                  $this->context->controller->registerStylesheet(
+                    'fontscss',
+                    'https://js.arcgis.com/4.9/esri/themes/light/main.css',
+                    array('server' => 'remote', 'position' => 'bottom', 'priority' => 200)
+                );
+                $this->context->controller->registerStylesheet(
+                  'omniva-modulename-style',
+                  'modules/'.$this->name.'/views/css/omniva.css',
+                  [
+                    'media' => 'all',
+                    'priority' => 200,
+                  ]
+                );
+              $this->context->controller->registerJavascript(
+                'arcgis',
+                'https://js.arcgis.com/4.9/',
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 200)
+            );
+            }
+
             $this->context->controller->registerJavascript(
             'omnivalt',
             'modules/'.$this->name.'/views/js/omnivaltDelivery.js',
@@ -646,7 +731,10 @@ public function displayForm()
                   'priority' => 200,
                 ]
             );
-            $this->smarty->assign('omnivalt_parcel_terminal_carrier_id', Configuration::get('omnivalt_pt'));
+            $this->smarty->assign(array(
+              'omniva_api_key' => $apiKey,
+              'omnivalt_parcel_terminal_carrier_id'=> Configuration::get('omnivalt_pt')
+            ));
             
             return $this->display(__FILE__, 'header.tpl');
         }
