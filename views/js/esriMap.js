@@ -79,7 +79,6 @@ function affixScriptToHead(url, onloadFunction) {
     newScript.src = url;
   }
   affixScriptToHead("https://js.arcgis.com/4.9/", function () { 
-    console.log('[[ADDRESS COUNTRY]]', address_country);
 
   var element = document.getElementById('omniva-search');
   element.addEventListener('keypress', function(evt) {
@@ -106,7 +105,6 @@ require([
   });
 
    view = new MapView({
-    //center: [23.96472, 54.999921],
     center: [24.105078, 56.946285],
     container: "map-omniva-terminals",
     map: map,
@@ -142,7 +140,6 @@ require([
 
         /* Search widget*/
         searchLoc = new Locator({ url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer" });
-        //searchLoc.countryCode = "Lt"
         var searchWidget = new Search({
             view: view,
             position: "top-left",
@@ -155,7 +152,6 @@ require([
 
         sources = [{
                 locator: searchLoc,
-                countryCode: "Lt",
                 placeholder: text_search_placeholder,
                 resultSymbol: {
                     type: "picture-marker",
