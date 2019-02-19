@@ -657,8 +657,8 @@ public function displayForm()
             'omnivalt_parcel_terminal_carrier_id' => Configuration::get('omnivalt_pt'),
             'parcel_terminals' => $this->getTerminalsOptions($selected,$address['iso_code']),
             'omniva_api_key' => $apiKey,
-            'terminals_list' => json_encode($this->getTerminalForMap()),
-            'terminals_list2' => $this->getTerminalForMap(),
+            //'terminals_list' => json_encode($this->getTerminalForMap()),
+            'terminals_list' => $this->getTerminalForMap(),
 
         ));
 
@@ -716,12 +716,12 @@ public function displayForm()
                     'media' => 'all',
                     'priority' => 200,
                   ]
-                );
+                );/*
               $this->context->controller->registerJavascript(
                 'arcgis',
                 'https://js.arcgis.com/4.9/',
                 array('server' => 'remote', 'position' => 'bottom', 'priority' => 200)
-            );
+              );*/
             }
 
             $this->context->controller->registerJavascript(
@@ -733,6 +733,7 @@ public function displayForm()
             );
             $this->smarty->assign(array(
               'omniva_api_key' => $apiKey,
+              'mapEsri' => $this->_path . 'views/js/esriMap.js',
               'omnivalt_parcel_terminal_carrier_id'=> Configuration::get('omnivalt_pt')
             ));
             

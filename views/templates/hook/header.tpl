@@ -28,16 +28,15 @@
 
 
 {if isset($omniva_api_key) and $omniva_api_key}
-
+<script defer type="text/javascript" src="{$mapEsri}" ></script>
 <script>
     var omnivaSearch = "{l s='Įveskite adresą paieškos laukelyje, norint surasti paštomatus'}";
     {literal}
         var modal = document.getElementById('omnivaLtModal');
-        /*var btn = document.getElementById("show-omniva-map");*/
         window.document.onclick = function(event) {console.log('[[Window Event]]', event.target)
             if (event.target == modal || event.target.id == 'omnivaLtModal' || event.target.id == 'terminalsModal') {
               document.getElementById('omnivaLtModal').style.display = "none";
-            } else if(event.target.id == 'show-omniva-map') {console.log('[[SHOW MAP]]')
+            } else if(event.target.id == 'show-omniva-map') {
               document.getElementById('omnivaLtModal').style.display = "block";
             }
         }
