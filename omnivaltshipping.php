@@ -684,6 +684,8 @@ public function displayForm()
   
   public function hookHeader($params)
   {
+    //var_dump($this->context->language);
+    //$this->context->language->iso_code
         if (in_array(Context::getContext()->controller->php_self, array('order-opc', 'order'))) {
             $this->context->controller->registerJavascript(
             'select2',

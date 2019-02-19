@@ -30,12 +30,12 @@
 {if isset($omniva_api_key) and $omniva_api_key}
     <script type="text/javascript">
       var locations = {$terminals_list|@json_encode nofilter}
-      var select_terminal = "{l s='Pasirinkti terminalą'}";
-      var text_search_placeholder = "įveskite adresą";
+      var select_terminal = "{l s='Pasirinkti terminalą'  mod='omnivaltshipping'}";
+      var text_search_placeholder = "{l s='įveskite adresą' mod='omnivaltshipping'}";
     </script>
 <script defer type="text/javascript" src="{$mapEsri}" ></script>
 <script>
-    var omnivaSearch = "{l s='Įveskite adresą paieškos laukelyje, norint surasti paštomatus'}";
+    var omnivaSearch = "{l s='Įveskite adresą paieškos laukelyje, norint surasti paštomatus'  mod='omnivaltshipping'}";
     {literal}
         var modal = document.getElementById('omnivaLtModal');
         window.document.onclick = function(event) {
@@ -51,13 +51,13 @@
   <div class="omniva-modal-content">
     <div class="omniva-modal-header">
       <span class="close" id="terminalsModal">&times;</span>
-      <h5 style="display: inline">{l s='Omniva paštomatai'}</h5>
+      <h5 style="display: inline">{l s='Omniva paštomatai'  mod='omnivaltshipping'}</h5>
     </div>
     <div class="omniva-modal-body" style="/*overflow: hidden;*/">
         <div id="map-omniva-terminals">
         </div>
         <div class="omniva-search-bar" >
-            <h3 style="margin-top: 0px;">{l s='Paštomatų adresai'}</h3>
+            <h3 style="margin-top: 0px;">{l s='Paštomatų adresai'  mod='omnivaltshipping'}</h3>
             <div id="omniva-search"></div>
             <div class="found_terminals scrollbar" id="style-8"></div>
         </div>
