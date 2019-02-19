@@ -595,7 +595,7 @@ public function displayForm()
     if (is_array($terminals)){
       $terminalsList = array();
       foreach ($terminals as $terminal){
-        if ($terminal['A0_NAME'] != $country && in_array($country,array("LT","EE","LV")) || intval($terminal['TYPE']) == 1)
+      if (/*$terminal['A0_NAME'] != $country && in_array($country,array("LT","EE","LV")) ||*/ intval($terminal['TYPE']) == 1)
           continue;
         if (!isset($grouped_options[$terminal['A1_NAME']]))
           $grouped_options[(string)$terminal['A1_NAME']] = array();
@@ -657,10 +657,7 @@ public function displayForm()
             'omnivalt_parcel_terminal_carrier_id' => Configuration::get('omnivalt_pt'),
             'parcel_terminals' => $this->getTerminalsOptions($selected,$address['iso_code']),
             'omniva_api_key' => $apiKey,
-            'terminals_list' => $this->getTerminalForMap(),
-
         ));
-
         return $this->display(__file__, 'displayBeforeCarrier.tpl');
   }
   

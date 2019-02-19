@@ -26,7 +26,7 @@
             #omnivalt_parcel_terminal_carrier_details{ margin-bottom: 5px }
         {/literal}
     </style>
-{if isset($omniva_api_key) and $omniva_api_key != false }
+{if isset($omniva_api_key) and $omniva_api_key != false } 
   <button type="button" id="show-omniva-map" class="btn-marker">
     <!--<i id="show-omniva-map" class="fa fa-map-marker fa-lg" aria-hidden="true"></i>-->
     <i id="show-omniva-map" class="material-icons">add_location</i>

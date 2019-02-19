@@ -38,7 +38,7 @@
     var omnivaSearch = "{l s='Įveskite adresą paieškos laukelyje, norint surasti paštomatus'}";
     {literal}
         var modal = document.getElementById('omnivaLtModal');
-        window.document.onclick = function(event) {console.log('[[Window Event]]', event.target)
+        window.document.onclick = function(event) {
             if (event.target == modal || event.target.id == 'omnivaLtModal' || event.target.id == 'terminalsModal') {
               document.getElementById('omnivaLtModal').style.display = "none";
             } else if(event.target.id == 'show-omniva-map') {
