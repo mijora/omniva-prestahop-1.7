@@ -25,4 +25,43 @@
     var omnivalt_parcel_terminal_error = '{l s='Please select parcel terminal' mod='omnivaltshipping'}';
     var omnivaltdelivery_controller = '{$link->getModuleLink('omnivaltshipping', 'ajax') nofilter}';
 </script>
-<!--  omnivalt_parcel_terminal_carrier [end] -->
+
+
+{if isset($omniva_api_key) and $omniva_api_key}
+    <script type="text/javascript">
+      var locations = {$terminals_list|@json_encode nofilter}
+      var select_terminal = "{l s='Pasirinkti terminalą'}";
+      var text_search_placeholder = "įveskite adresą";
+    </script>
+<script defer type="text/javascript" src="{$mapEsri}" ></script>
+<script>
+    var omnivaSearch = "{l s='Įveskite adresą paieškos laukelyje, norint surasti paštomatus'}";
+    {literal}
+        var modal = document.getElementById('omnivaLtModal');
+        window.document.onclick = function(event) {console.log('[[Window Event]]', event.target)
+            if (event.target == modal || event.target.id == 'omnivaLtModal' || event.target.id == 'terminalsModal') {
+              document.getElementById('omnivaLtModal').style.display = "none";
+            } else if(event.target.id == 'show-omniva-map') {
+              document.getElementById('omnivaLtModal').style.display = "block";
+            }
+        }
+    {/literal}
+</script>
+<div id="omnivaLtModal" class="modal" style="backgound: 'green'">
+  <div class="omniva-modal-content">
+    <div class="omniva-modal-header">
+      <span class="close" id="terminalsModal">&times;</span>
+      <h5 style="display: inline">{l s='Omniva paštomatai'}</h5>
+    </div>
+    <div class="omniva-modal-body" style="/*overflow: hidden;*/">
+        <div id="map-omniva-terminals">
+        </div>
+        <div class="omniva-search-bar" >
+            <h3 style="margin-top: 0px;">{l s='Paštomatų adresai'}</h3>
+            <div id="omniva-search"></div>
+            <div class="found_terminals scrollbar" id="style-8"></div>
+        </div>
+    </div>
+  </div>
+</div>
+{/if}
