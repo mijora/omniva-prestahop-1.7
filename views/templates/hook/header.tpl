@@ -28,6 +28,11 @@
 
 
 {if isset($omniva_api_key) and $omniva_api_key}
+    <script type="text/javascript">
+      var locations = {$terminals_list|@json_encode nofilter}
+      var select_terminal = "{l s='Pasirinkti terminalą'}";
+      var text_search_placeholder = "įveskite adresą";
+    </script>
 <script defer type="text/javascript" src="{$mapEsri}" ></script>
 <script>
     var omnivaSearch = "{l s='Įveskite adresą paieškos laukelyje, norint surasti paštomatus'}";

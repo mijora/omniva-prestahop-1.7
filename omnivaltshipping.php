@@ -657,7 +657,6 @@ public function displayForm()
             'omnivalt_parcel_terminal_carrier_id' => Configuration::get('omnivalt_pt'),
             'parcel_terminals' => $this->getTerminalsOptions($selected,$address['iso_code']),
             'omniva_api_key' => $apiKey,
-            //'terminals_list' => json_encode($this->getTerminalForMap()),
             'terminals_list' => $this->getTerminalForMap(),
 
         ));
@@ -698,30 +697,24 @@ public function displayForm()
             $apiKey = Configuration::get('omnivalt_map');
             $apiKey = ($apiKey>0);
             if ($apiKey) {
-                $this->context->controller->registerStylesheet(
-                  'fontscss',
-                  'https://use.fontawesome.com/releases/v5.3.1/css/all.css',
-                  array('server' => 'remote', 'position' => 'bottom', 'priority' => 190)
-                );
-                $this->context->controller->addCSS(array( 'https://use.fontawesome.com/releases/v5.3.1/css/all.css', ));
-                  $this->context->controller->registerStylesheet(
-                    'fontscss',
-                    'https://js.arcgis.com/4.9/esri/themes/light/main.css',
-                    array('server' => 'remote', 'position' => 'bottom', 'priority' => 200)
-                );
-                $this->context->controller->registerStylesheet(
-                  'omniva-modulename-style',
-                  'modules/'.$this->name.'/views/css/omniva.css',
-                  [
-                    'media' => 'all',
-                    'priority' => 200,
-                  ]
-                );/*
-              $this->context->controller->registerJavascript(
-                'arcgis',
-                'https://js.arcgis.com/4.9/',
-                array('server' => 'remote', 'position' => 'bottom', 'priority' => 200)
-              );*/
+              $this->context->controller->registerStylesheet(
+                'fontscss',
+                'https://use.fontawesome.com/releases/v5.7.2/css/all.css',
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 190)
+              );
+              $this->context->controller->registerStylesheet(
+                'fontscss',
+                'https://js.arcgis.com/4.9/esri/themes/light/main.css',
+                 array('server' => 'remote', 'position' => 'bottom', 'priority' => 200)
+              );
+             $this->context->controller->registerStylesheet(
+              'omniva-modulename-style',
+              'modules/'.$this->name.'/views/css/omniva.css',
+                [
+                  'media' => 'all',
+                  'priority' => 200,
+                ]
+              );
             }
 
             $this->context->controller->registerJavascript(
@@ -731,9 +724,11 @@ public function displayForm()
                   'priority' => 200,
                 ]
             );
+
             $this->smarty->assign(array(
               'omniva_api_key' => $apiKey,
               'mapEsri' => $this->_path . 'views/js/esriMap.js',
+              'terminals_list' => $this->getTerminalForMap(),
               'omnivalt_parcel_terminal_carrier_id'=> Configuration::get('omnivalt_pt')
             ));
             

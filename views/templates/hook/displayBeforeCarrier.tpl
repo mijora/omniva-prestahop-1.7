@@ -27,17 +27,8 @@
         {/literal}
     </style>
 {if isset($omniva_api_key) and $omniva_api_key != false }
-  <script type="text/javascript">
-    const DEBUG = true;
-    var locations = {$terminals_list|@json_encode nofilter}
-    if (typeof(DEBUG) !== 'undefined')
-      console.log('TYPE OF UNPARSED', typeof(locations), locations);
-    
-    var select_terminal = "{l s='Pasirinkti terminalą'}";
-    var text_search_placeholder = "įveskite adresą";
-  </script>
-  <button type="button" id="show-omniva-map" class="btn btn-basic btn-sm omniva-btn">
-    <!--<i id="show-omniva-map" class="fa fa-map-marker-alt fa-lg" aria-hidden="true"></i>-->
+  <button type="button" id="show-omniva-map" class="btn-marker">
+    <!--<i id="show-omniva-map" class="fa fa-map-marker fa-lg" aria-hidden="true"></i>-->
     <i id="show-omniva-map" class="material-icons">add_location</i>
   </button>
 {/if}
