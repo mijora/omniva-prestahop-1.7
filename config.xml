@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
 	<name>omnivaltshipping</name>
-	<displayName><![CDATA[Omnivalt Shipping]]></displayName>
+	<displayName><![CDATA[Omniva Shipping]]></displayName>
 	<version><![CDATA[1.0.1]]></version>
-	<description><![CDATA[Shipping module for Omnivalt carrier]]></description>
+	<description><![CDATA[Shipping module for Omniva carrier]]></description>
 	<author><![CDATA[Omniva.lt]]></author>
 	<tab><![CDATA[shipping_logistics]]></tab>
 	<confirmUninstall><![CDATA[Are you sure you want to uninstall?]]></confirmUninstall>
