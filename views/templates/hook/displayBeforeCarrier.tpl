@@ -21,11 +21,6 @@
 <div id="omnivalt_parcel_terminal_carrier_details" style="display: none; margin-top: 10px;">
     <select class="select2" name="omnivalt_parcel_terminal" style = "width:100%;">{$parcel_terminals nofilter}</select>
 
-    <style>
-        {literal}
-            #omnivalt_parcel_terminal_carrier_details{ margin-bottom: 5px }
-        {/literal}
-    </style>
 {if isset($omniva_api_key) and $omniva_api_key != false } 
   <button type="button" id="show-omniva-map" class="btn-marker">
     <!--<i id="show-omniva-map" class="fa fa-map-marker fa-lg" aria-hidden="true"></i>-->

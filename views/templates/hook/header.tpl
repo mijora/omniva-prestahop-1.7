@@ -36,6 +36,7 @@
 <script defer type="text/javascript" src="{$mapEsri}" ></script>
 <script>
     var omnivaSearch = "{l s='Įveskite adresą paieškos laukelyje, norint surasti paštomatus'  mod='omnivaltshipping'}";
+    var userPostcode = document.cookie.split("=").pop();
     {literal}
         var modal = document.getElementById('omnivaLtModal');
         window.document.onclick = function(event) {
@@ -43,8 +44,9 @@
               document.getElementById('omnivaLtModal').style.display = "none";
             } else if(event.target.id == 'show-omniva-map') {
               document.getElementById('omnivaLtModal').style.display = "block";
+              document.getElementsByClassName("esri-input")[0].value = userPostcode+', LTU';
             }
-        }
+        };
     {/literal}
 </script>
 <div id="omnivaLtModal" class="modal" style="backgound: 'green'">

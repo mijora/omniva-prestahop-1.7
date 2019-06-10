@@ -88,7 +88,7 @@ var omnivaltDelivery = {
         }
         return false;
     },
-}
+};
 	
 //when document is loaded...
 $(document).ready(function(){
@@ -97,4 +97,9 @@ $(document).ready(function(){
     $('.delivery-options .delivery-option input[type="radio"]').on('click',function(){
         omnivaltDelivery.init();
     });
-})
+
+    $("button[name='confirm-addresses']").on('click',function(){
+        var userPostcode = $("input[name='postcode']").val();
+        document.cookie = "userPostcode="+userPostcode;
+    });
+});
