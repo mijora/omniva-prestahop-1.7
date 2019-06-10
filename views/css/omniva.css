@@ -1,3 +1,15 @@
+#show-omniva-map {
+    width: 100%;
+    margin-top: 10px;
+    font-weight: bold;
+    border: none;
+    background-color: #EEEEEE;
+    color: #232323;
+}
+#show-omniva-map:hover {
+    cursor: pointer;
+    background-color: #D5D5D5;
+}
 .modal {
     display: none;
     position: fixed;
@@ -101,7 +113,6 @@
     margin: 2px;
     border: 1px solid black;
     border-radius: 3px;
-    color: white;
     font-size: 15px;
     font-weight:500;
 }
