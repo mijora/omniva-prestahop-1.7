@@ -31,7 +31,7 @@
     <script type="text/javascript">
       var locations = {$terminals_list|@json_encode nofilter}
       var select_terminal = "{l s='Pasirinkti terminalą'  mod='omnivaltshipping'}";
-      var text_search_placeholder = "{l s='įveskite adresą' mod='omnivaltshipping'}";
+      var text_search_placeholder = "{l s='įveskite pašto kodą' mod='omnivaltshipping'}";
     </script>
 <script defer type="text/javascript" src="{$mapEsri}" ></script>
 <script>
@@ -44,7 +44,8 @@
               document.getElementById('omnivaLtModal').style.display = "none";
             } else if(event.target.id == 'show-omniva-map') {
               document.getElementById('omnivaLtModal').style.display = "block";
-              document.getElementsByClassName("esri-input")[0].value = userPostcode+', LTU';
+              document.getElementsByClassName("esri-input")[0].value = userPostcode;
+              document.getElementsByClassName("esri-input")[0].focus();
             }
         };
     {/literal}

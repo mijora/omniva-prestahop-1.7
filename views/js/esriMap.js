@@ -145,13 +145,14 @@ require([
             position: "top-left",
             enableInfoWindow: false,
             popupEnabled: false,
-            minSuggestCharacters:4,
+            minSuggestCharacters:1,
             includeDefaultSources:false,
             container: "omniva-search",
         });
 
         sources = [{
                 locator: searchLoc,
+                countryCode:"LTU, LVA, EST",
                 placeholder: text_search_placeholder,
                 resultSymbol: {
                     type: "picture-marker",
