@@ -37,7 +37,7 @@ function terminalSelected(terminal) {
   var container = document.querySelector("select[name='omnivalt_parcel_terminal']");
   var matches = document.querySelectorAll(".omnivaOption");
   for (var i = 0; i < matches.length; i++) {
-    node = matches[i]
+    node = matches[i];
     if ( node.value == terminal) {
       node.selected = 'selected';
     } else {
@@ -55,7 +55,7 @@ function selectToMap(terminal_id) {
     view.graphics.forEach(function(graphic){ 
         var omniva = Object.assign({}, graphic.omniva);
         if(graphic.omniva.id == terminal_id) {
-            view.zoom = 13
+            view.zoom = 13;
             view.goTo(graphic);
             var popup = view.popup;
             popup.title =  omniva.name,
@@ -134,17 +134,18 @@ require([
             },
             symbol: markerSymbol,
                 popupTemplate: popTemplate(locations[i][3], locations[i][0], locations[i][4], locations[i][5], locations[i][6])
-            })
+            });
             view.graphics.add(graphic);
         }
 
         /* Search widget*/
         searchLoc = new Locator({ url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer" });
         var searchWidget = new Search({
+
             view: view,
             position: "top-left",
-            enableInfoWindow: false,
-            popupEnabled: false,
+            enableInfoWindow: true,
+            popupEnabled: true,
             minSuggestCharacters:1,
             includeDefaultSources:false,
             container: "omniva-search",
@@ -164,7 +165,7 @@ require([
                     yoffset: 0
                 }
             }
-        ]
+        ];
 
         searchWidget.sources = sources;
 
@@ -174,8 +175,8 @@ require([
             view.graphics.forEach(function(graphic){ 
                 var omniva = Object.assign({}, graphic.omniva);
                 if (graphic && graphic.omniva && graphic.omniva.id == id) {
-                    view.zoom = 15
-                    view.goTo(graphic)
+                    view.zoom = 15;
+                    view.goTo(graphic);
                     var popup = view.popup;
                     popup.title =  omniva.name,
                     popup.content = "<b>"+omniva.city+"</b><br><b>"+omniva.address+"</b><br>"+omniva.comment+"<br>"+
@@ -184,15 +185,15 @@ require([
                     popup.open();    
                 }
             });  
-        }
+        };
 
         function terminalDetails(id) {
-            terminals = document.querySelectorAll(".omniva-details")
+            terminals = document.querySelectorAll(".omniva-details");
             for(i=0; i <terminals.length; i++) {
                 terminals[i].style.display = 'none';
             }
             id = 'omn-'+id;
-            dispOmniva = document.getElementById(id)
+            dispOmniva = document.getElementById(id);
             if(dispOmniva)
                 dispOmniva.style.display = 'block';
         }
@@ -201,16 +202,16 @@ require([
             navigator.geolocation.getCurrentPosition(function(loc) {
                 findClosest(loc.coords.latitude, loc.coords.longitude)
             })
-        }
+        };
 
         function findClosest(lat, lng) {
-            view.zoom = 12
+            view.zoom = 12;
             view.center = [lng, lat];
             filteredGRAF = view.graphics.map(function(graphic){
-                    var latitude = graphic.geometry.latitude
-                    var longitude = graphic.geometry.longitude
-                    var distance = calcCrow(lat, lng, latitude, longitude)
-                    graphic.geometry.distance =distance.toFixed(2)
+                    var latitude = graphic.geometry.latitude;
+                    var longitude = graphic.geometry.longitude;
+                    var distance = calcCrow(lat, lng, latitude, longitude);
+                    graphic.geometry.distance =distance.toFixed(2);
                     return graphic
             });
 
@@ -220,8 +221,8 @@ require([
             }*/
 
             filteredGRAF.sort(function(a, b) {
-                var distOne = a.geometry.distance
-                var distTwo = b.geometry.distance
+                var distOne = a.geometry.distance;
+                var distTwo = b.geometry.distance;
                 if (parseFloat(distOne) < parseFloat(distTwo)) {
                     return -1;
                 }
@@ -229,7 +230,7 @@ require([
                     return 1;
                 }
                 return 0;
-            })
+            });
 
         if (filteredGRAF.length > 0) {
             filteredGRAF = filteredGRAF.slice(1, 16);
@@ -239,12 +240,12 @@ require([
 
                 var omniva = terminal.omniva;
                 var termGraphic = terminal;
-                var destination = [terminal.geometry.longitude, terminal.geometry.latitude]
+                var destination = [terminal.geometry.longitude, terminal.geometry.latitude];
 
                 var goTo = {
                         target: destination,
                         zoom: 5
-                        }
+                        };
 
                 counter++;
                 html += '<li onclick="zoomTo(['+destination+'],'+omniva.id+')" ><div style="widthh:60%;"><a class="omniva-li">'+counter+'. <b>'+omniva.name+'</b></a> <b>'+terminal.geometry.distance+' km.</b>\
@@ -253,7 +254,7 @@ require([
                             <button class="btn-marker" style="font-size:14px; padding:0px 5px;margin-bottom:10px; margin-top:5px;height:25px;" onclick="terminalSelected('+omniva.id+')">'+select_terminal+'</button>\
                             </div>\
                             </div></li>';
-            })
+            });
 
             document.querySelector('.found_terminals').innerHTML = '<ol class="omniva-terminals-list" start="1">'+html+'</ol>';
         }
@@ -266,4 +267,4 @@ require([
         return true;
     });
 });
-})
+});
