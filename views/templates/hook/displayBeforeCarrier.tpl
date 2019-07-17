@@ -17,19 +17,21 @@
 * versions in the future.
 * ****************************************************
 *}
-
+<script>
+    var omniva_current_country = '{$omniva_current_country}';
+    var omniva_postcode = '{$omniva_postcode}';
+    var omnivaTerminals = {$terminals_list|@json_encode nofilter}
+    var show_omniva_map = {$omniva_map};
+</script>
 <div id="omnivalt_parcel_terminal_carrier_details" style="display: none; margin-top: 10px;">
-    <select class="select2" name="omnivalt_parcel_terminal" style = "width:100%;">{$parcel_terminals nofilter}</select>
+    <select class="" name="omnivalt_parcel_terminal" style = "width:100%;">{$parcel_terminals nofilter}</select>
 
     <style>
         {literal}
             #omnivalt_parcel_terminal_carrier_details{ margin-bottom: 5px }
         {/literal}
     </style>
-{if isset($omniva_api_key) and $omniva_api_key != false } 
-  <button type="button" id="show-omniva-map" class="btn-marker">
-    <!--<i id="show-omniva-map" class="fa fa-map-marker fa-lg" aria-hidden="true"></i>-->
-    <i id="show-omniva-map" class="material-icons">add_location</i>
-  </button>
+{if $omniva_map != false } 
+  <button type="button" id="show-omniva-map" class="btn btn-basic btn-sm omniva-btn" style = "display: none;">{l s='Show parcel terminals map' mod='omnivaltshipping'} <img src = "{$module_url}sasi.png" title = "{l s='Show parcel terminals map' mod='omnivaltshipping'}"/></button>
 {/if}
 </div>
