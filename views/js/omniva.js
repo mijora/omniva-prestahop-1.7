@@ -127,7 +127,6 @@ var omniva_addrese_change = false;
                     }
                 });
             }
-            console.log('map');
             $('#omnivaLtModal').show();
             //getLocation();
             var event;
