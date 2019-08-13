@@ -804,7 +804,7 @@ public function displayForm()
             'total_weight'=> isset($OrderInfo['weight']) ? $OrderInfo['weight']: $order->getTotalWeight(),
             'packs'=> isset($OrderInfo['packs']) ? $OrderInfo['packs']: 1,
             'total_paid_tax_incl'=> isset($OrderInfo['cod_amount']) ? $OrderInfo['cod_amount']:$order->total_paid_tax_incl,
-            'is_cod' => isset($OrderInfo['is_cod']) ? $OrderInfo['is_cod']: ($order->module == 'cashondeliveryplus' OR $order->module == 'cashondelivery'),
+            'is_cod' => isset($OrderInfo['is_cod']) ? $OrderInfo['is_cod']: (strpos($order->module, 'cashondelivery') !== -1),
             'parcel_terminals' => $this->getTerminalsOptions($terminal_id, $countryCode),
             'carriers' => $this->getCarriersOptions($cart->id_carrier),
             'order_id'=>(int)$id_order['id_order'],
