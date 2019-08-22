@@ -5,15 +5,14 @@ class AdminOmnivaOrdersController extends ModuleAdminController
     
 		public function __construct()
 		{
-      
-      $this->_carriers = Configuration::get('omnivalt_pt') . ',' . Configuration::get('omnivalt_c');
-      
 			$this->bootstrap = true;
       $this->name = 'AdminModList';
       
 			$this->meta_title = $this->l('Omniva orders', 'omnivaltshipping');
       
 			parent::__construct();
+
+			$this->_carriers = $this->getCarrierIds();
 			if(Tools::getValue('orderSkip') != null) {
 				$this->skipOrder();
 				exit();
@@ -28,6 +27,12 @@ class AdminOmnivaOrdersController extends ModuleAdminController
 				exit();
 			}
 		}
+
+		private function getCarrierIds()
+		{
+			return implode(',', OmnivaltShipping::getCarrierIds());
+		}
+
 		public function callcarrier() {
 			$this->_module = new OmnivaltShipping();
 			$callCarrierReturn = $this->_module->call_omniva();

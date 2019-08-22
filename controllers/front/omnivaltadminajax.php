@@ -119,15 +119,16 @@ class OmnivaltshippingOmnivaltadminajaxModuleFrontController extends ModuleFront
     
     protected function printBulkLabels(){
         require_once(_PS_MODULE_DIR_.'omnivaltshipping/tcpdf/tcpdf.php');
-        require_once(_PS_MODULE_DIR_.'omnivaltshipping/fpdi/fpdi.php');
+        require_once(_PS_MODULE_DIR_.'omnivaltshipping/fpdi/autoload.php');
         $orderIds = trim($_REQUEST['order_ids'],',');
         $orderIds = explode(',',$orderIds);
         OmnivaltShipping::checkForClass('OrderInfo');
         $object = '';
-        $pdf = new FPDI();
+        $pdf = new \setasign\Fpdi\TcpdfFpdi('P');
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
-        if (is_array($orderIds))
+        if (is_array($orderIds)){
+          $carrier_ids = OmnivaltShipping::getCarrierIds();
           foreach($orderIds as $orderId){
             $orderInfoObj = new OrderInfo();
             $orderInfo = $orderInfoObj->getOrderInfo($orderId);
@@ -140,7 +141,7 @@ class OmnivaltshippingOmnivaltadminajaxModuleFrontController extends ModuleFront
             if(empty($orderInfo))
               continue;
             $order = new Order((int)$orderId);
-            if (!($order->id_carrier == Configuration::get('omnivalt_pt') || $order->id_carrier == Configuration::get('omnivalt_c')))
+            if (!in_array((int)$order->id_carrier, $carrier_ids))
               continue;
             $track_numer = $order->getWsShippingNumber();
             if ($track_numer == ''){
@@ -199,18 +200,18 @@ if( $this->labelsMix >= 4) {
   $tplidx = $pdf->ImportPage(1);
   
     if($this->labelsMix == 0) {
-    $pdf->useTemplate($tplidx, 5, 15, 94.5, 108, true);
+    $pdf->useTemplate($tplidx, 5, 15, 94.5, 108, false);
   } else if ($this->labelsMix == 1) {
-    $pdf->useTemplate($tplidx, 110, 15, 94.5, 108, true);
+    $pdf->useTemplate($tplidx, 110, 15, 94.5, 108, false);
   } else if ($this->labelsMix == 2) {
-    $pdf->useTemplate($tplidx, 5, 140, 94.5, 108, true);  
+    $pdf->useTemplate($tplidx, 5, 140, 94.5, 108, false);  
   } else if ($this->labelsMix == 3) {
-    $pdf->useTemplate($tplidx, 110, 140, 94.5, 108, true);  
+    $pdf->useTemplate($tplidx, 110, 140, 94.5, 108, false);  
   } else {echo $this->_module->l('Problems with labels count, please, select one order!!!');exit();}
   //$pages++;
   $this->labelsMix++;
 /*-------------------------------------*/
-          }
+          }}
         $pdf->Output('Omnivalt_labels.pdf');
     }
     public function setOmnivaOrder($id_order = '')
@@ -269,7 +270,9 @@ if( $this->labelsMix >= 4) {
         $pdf->AddPage();
         $order_table = '';
         $count = 1;
-        if (is_array($orderIds))
+        if (is_array($orderIds)){
+          $carrier_ids = OmnivaltShipping::getCarrierIds();
+          $carrier_terminal_ids = OmnivaltShipping::getCarrierIds(['omnivalt_pt']);
           foreach($orderIds as $orderId){
             if (!$orderId)
               continue;
@@ -284,7 +287,7 @@ if( $this->labelsMix >= 4) {
             if(empty($orderInfo))
               continue;
             $order = new Order((int)$orderId);
-            if (!($order->id_carrier == Configuration::get('omnivalt_pt') || $order->id_carrier == Configuration::get('omnivalt_c')))
+            if (!in_array($order->id_carrier, $carrier_ids))
               continue;
             $track_numer = $order->getWsShippingNumber();
             if ($track_numer == ''){
@@ -305,7 +308,7 @@ if( $this->labelsMix >= 4) {
             }
             $this->setOmnivaOrder($orderId);
             $pt_address = '';
-            if ($order->id_carrier == Configuration::get('omnivalt_pt')){
+            if (in_array($order->id_carrier, $carrier_terminal_ids)){
               $cart = new Cart($order->id_cart);
               $pt_address = OmnivaltShipping::getTerminalAddress($cart->omnivalt_terminal);
             }
@@ -321,9 +324,10 @@ if( $this->labelsMix >= 4) {
             $history->id_order = (int)$orderId;
             $history->id_employee = (int)$cookie->id_employee;
             $history->changeIdOrderState((int)Configuration::get('PS_OS_SHIPPING'), $order);
-            $history->addWithEmail(true);
+            $history->add();
+            //$history->addWithEmail(true); // broken in 1.7.6
             
-          }
+          }}
         $pdf->SetFont('freeserif', '', 14);
         $id_lang = $cookie->id_lang;
         
