@@ -83,7 +83,7 @@ $_MODULE['<{omnivaltshipping}prestashop>blockinorder_165977bc8006193936272e96ef4
 $_MODULE['<{omnivaltshipping}prestashop>blockinorder_a48721091a600c187f14daf610e22a32'] = 'Sėkmingai pridėta.';
 $_MODULE['<{omnivaltshipping}prestashop>displaybeforecarrier_ba7db2627418d3f2e83488ddca125cd2'] = 'Žiūrėti žemėlapyje';
 $_MODULE['<{omnivaltshipping}prestashop>header_ab6818405d4e2ece132a8b65c28e9bb9'] = 'Pasirinkti paštomatą';
-$_MODULE['<{omnivaltshipping}prestashop>header_dd238d9d1c8619a2c999cdc7cb674264'] = 'Įveskite pašto kodą';
+$_MODULE['<{omnivaltshipping}prestashop>header_dd238d9d1c8619a2c999cdc7cb674264'] = 'Įveskite pašto kodą / adresą';
 $_MODULE['<{omnivaltshipping}prestashop>header_d26e7830f405fcd6887d766a0ae8787b'] = 'Vieta nerasta';
 $_MODULE['<{omnivaltshipping}prestashop>header_271e53f729450d8c0e1c7c3bc00c43a7'] = 'Įveskite pašto kodą / adresą';
 $_MODULE['<{omnivaltshipping}prestashop>header_1abeb90e19a533f38477e18ce142ccd5'] = 'Rodyti žemėlapyje';
