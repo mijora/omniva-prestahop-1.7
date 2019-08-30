@@ -302,10 +302,11 @@ class OmnivaltShipping extends CarrierModule
   {
     $id_carrier_old = (int) ($params['id_carrier']);
     $id_carrier_new = (int) ($params['carrier']->id);
-    if ($id_carrier_old == (int) (Configuration::get('omnivalt_pt')))
-      Configuration::updateValue('omnivalt_pt', $id_carrier_new);
-    if ($id_carrier_old == (int) (Configuration::get('omnivalt_c')))
-      Configuration::updateValue('omnivalt_c', $id_carrier_new);
+    
+    foreach (self::$_carriers as $value) {
+      if ($id_carrier_old == (int) (Configuration::get($value)))
+        Configuration::updateValue($value, $id_carrier_new);
+    }
   }
 
   /*
