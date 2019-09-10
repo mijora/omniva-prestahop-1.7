@@ -2,7 +2,7 @@
 <module>
     <name>omnivaltshipping</name>
     <displayName><![CDATA[Omnivas piegāde]]></displayName>
-    <version><![CDATA[1.0.6]]></version>
+    <version><![CDATA[1.1.0]]></version>
     <description><![CDATA[Omnivas piegādes veida]]></description>
     <author><![CDATA[Omniva.lt]]></author>
     <tab><![CDATA[shipping_logistics]]></tab>
