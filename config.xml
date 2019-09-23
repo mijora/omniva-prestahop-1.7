@@ -2,7 +2,7 @@
 <module>
     <name>omnivaltshipping</name>
     <displayName><![CDATA[Omniva Shipping]]></displayName>
-    <version><![CDATA[1.1.0]]></version>
+    <version><![CDATA[1.1.1]]></version>
     <description><![CDATA[Shipping module for Omniva carrier]]></description>
     <author><![CDATA[Omniva.lt]]></author>
     <tab><![CDATA[shipping_logistics]]></tab>
