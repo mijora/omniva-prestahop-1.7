@@ -33,7 +33,7 @@ class OmnivaltShipping extends CarrierModule
   {
     $this->name = 'omnivaltshipping';
     $this->tab = 'shipping_logistics';
-    $this->version = '1.1.1';
+    $this->version = '1.1.2';
     $this->author = 'Omniva.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '1.8');
@@ -951,7 +951,7 @@ class OmnivaltShipping extends CarrierModule
                             ' . $phones;
       // if ( $send_method != 'pt'):
       $xmlRequest .= '
-                             <address postcode="' . $address['postcode'] . '" ' . $parcel_terminal . ' deliverypoint="' . $address['city'] . '" country="' . $address['iso_code'] . '" street="' . $address['address1'] . '" />';
+                             <address postcode="' . $address['postcode'] . '" ' . $parcel_terminal . ' deliverypoint="' . $address['city'] . '" country="' . $address['iso_code'] . '" street="' . str_replace('"', "'", $address['address1']) . '" />';
       /* else:
                         $xmlRequest .= '
                              <address '.$parcel_terminal.' />';
