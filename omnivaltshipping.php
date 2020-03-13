@@ -522,7 +522,7 @@ class OmnivaltShipping extends CarrierModule
     // Load current value
     $helper->fields_value['omnivalt_api_url'] = Configuration::get('omnivalt_api_url');
     if ($helper->fields_value['omnivalt_api_url'] == "") {
-      $helper->fields_value['omnivalt_api_url'] = "https://edixml.post.ee/epmx/services/messagesService.wsdl";
+      $helper->fields_value['omnivalt_api_url'] = "https://edixml.post.ee";
     }
     $helper->fields_value['omnivalt_api_user'] = Configuration::get('omnivalt_api_user');
     $helper->fields_value['omnivalt_api_pass'] = Configuration::get('omnivalt_api_pass');
@@ -1048,7 +1048,7 @@ class OmnivaltShipping extends CarrierModule
   {
     $barcodes = array();;
     $errors = array();
-    $url = Configuration::get('omnivalt_api_url');
+    $url = Configuration::get('omnivalt_api_url') . "/epmx/services/messagesService.wsdl";
 
     $headers = array(
       "Content-type: text/xml;charset=\"utf-8\"",
@@ -1127,7 +1127,7 @@ class OmnivaltShipping extends CarrierModule
         </soapenv:Envelope>';
     //echo $xmlRequest;
     try {
-      $url = Configuration::get('omnivalt_api_url');
+      $url = Configuration::get('omnivalt_api_url') . "/epmx/services/messagesService.wsdl";
       $headers = array(
         "Content-type: text/xml;charset=\"utf-8\"",
         "Accept: text/xml",
