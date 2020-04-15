@@ -90,7 +90,7 @@ $_MODULE['<{omnivaltshipping}prestashop>header_1abeb90e19a533f38477e18ce142ccd5'
 $_MODULE['<{omnivaltshipping}prestashop>header_146ffe2fd9fa5bec3b63b52543793ec7'] = 'Rodyti daugiau';
 $_MODULE['<{omnivaltshipping}prestashop>header_0b110192097725bcb39ad4c49e319a42'] = 'Pasirinkite paštomatą';
 $_MODULE['<{omnivaltshipping}prestashop>header_a0cdc9d65ba1546e0d55ae52ce24ab97'] = 'Pasirinkite paštomatą';
-$_MODULE['<{omnivaltshipping}prestashop>header_ec9f1fac0b8a074f11b706dc26f426f4'] = 'Omiva paštomatai';
+$_MODULE['<{omnivaltshipping}prestashop>header_ec9f1fac0b8a074f11b706dc26f426f4'] = 'Omniva paštomatai';
 $_MODULE['<{omnivaltshipping}prestashop>header_bbd99246558810170f2bbba7b75f517c'] = 'Paštomatų adresai';
 $_MODULE['<{omnivaltshipping}prestashop>header_630f6dc397fe74e52d5189e2c80f282b'] = 'Atgal į sąrašą';
 $_MODULE['<{omnivaltshipping}prestashop>trackinginfo_73e0c6ff256e6be1b9ac2236bdbd697a'] = 'Siuntos sekimo informacija';
