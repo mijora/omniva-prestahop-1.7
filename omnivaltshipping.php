@@ -298,8 +298,10 @@ class OmnivaltShipping extends CarrierModule
 
   /**
    * Check if customer address for parcel terminal carrier is in Lithuania
+   *
    * @param  Object $params
-   * @return Boolean         T
+   *
+   * @return Boolean         True when iso_code is 'LT' or carrier is not 'omnivalt_pt'
    */
   private function canBeDeliveredToParcelTerminal($params) {
     $carrierId = isset($params->id_carrier) ? $params->id_carrier : null;
@@ -320,7 +322,8 @@ class OmnivaltShipping extends CarrierModule
       ';
       $isoCode = Db::getInstance()->getValue($sql);
 
-      if ('LT' !== $isoCode) {
+      $availableIsoCodes = ['LT', 'LV', 'EE'];
+      if (! in_array($isoCode, $availableIsoCodes)) {
         return false;
       }
 
