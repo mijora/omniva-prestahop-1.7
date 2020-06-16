@@ -288,9 +288,45 @@ class OmnivaltShipping extends CarrierModule
 
   public function getOrderShippingCost($params, $shipping_cost)
   {
+    if (! $this->canBeDeliveredToParcelTerminal($params)) {
+      return false;
+    }
     //if ($params->id_carrier == (int)(Configuration::get('omnivalt_pt')) || $params->id_carrier == (int)(Configuration::get('omnivalt_c')))
     return $shipping_cost;
     return false; // carrier is not known
+  }
+
+  /**
+   * Check if customer address for parcel terminal carrier is in Lithuania
+   * @param  Object $params
+   * @return Boolean         T
+   */
+  private function canBeDeliveredToParcelTerminal($params) {
+    $carrierId = isset($params->id_carrier) ? $params->id_carrier : null;
+    $omnivaltPt = (int) Configuration::get('omnivalt_pt');
+
+    if ($carrierId !== null && $carrierId == $omnivaltPt) {
+      $addressDeliveryId = isset($params->id_address_delivery) ? $params->id_address_delivery : null;
+      if (! $addressDeliveryId) {
+        return false;
+      }
+
+      // Find country iso code by address
+      $sql = '
+        SELECT c.iso_code
+        FROM ' . _DB_PREFIX_ . 'address AS a
+        LEFT JOIN ' . _DB_PREFIX_ . 'country AS c ON c.id_country = a.id_country
+        WHERE id_address="' . (int) $addressDeliveryId . '"
+      ';
+      $isoCode = Db::getInstance()->getValue($sql);
+
+      if ('LT' !== $isoCode) {
+        return false;
+      }
+
+      // Iso Code is LT or carrier is not parcel terminal
+      return true;
+    }
   }
 
   public function getOrderShippingCostExternal($params)
@@ -302,7 +338,7 @@ class OmnivaltShipping extends CarrierModule
   {
     $id_carrier_old = (int) ($params['id_carrier']);
     $id_carrier_new = (int) ($params['carrier']->id);
-    
+
     foreach (self::$_carriers as $value) {
       if ($id_carrier_old == (int) (Configuration::get($value)))
         Configuration::updateValue($value, $id_carrier_new);
@@ -936,7 +972,7 @@ class OmnivaltShipping extends CarrierModule
               <xsd:businessToClientMsgRequest>
                  <partner>' . Configuration::get('omnivalt_api_user') . '</partner>
                  <interchange msg_type="info11">
-                    <header file_id="' . \Date('YmdHms') . '" sender_cd="' . Configuration::get('omnivalt_api_user') . '" >                
+                    <header file_id="' . \Date('YmdHms') . '" sender_cd="' . Configuration::get('omnivalt_api_user') . '" >
                     </header>
                     <item_list>
                       ';
@@ -955,9 +991,9 @@ class OmnivaltShipping extends CarrierModule
       /* else:
                         $xmlRequest .= '
                              <address '.$parcel_terminal.' />';
-                      
+
                       endif; */
-      $xmlRequest .= ' 
+      $xmlRequest .= '
                          </receiverAddressee>
                           <!--Optional:-->
                           <returnAddressee>
@@ -965,7 +1001,7 @@ class OmnivaltShipping extends CarrierModule
                              <!--Optional:-->
                              <phone>' . Configuration::get('omnivalt_phone') . '</phone>
                              <address postcode="' . Configuration::get('omnivalt_postcode') . '" deliverypoint="' . Configuration::get('omnivalt_city') . '" country="' . Configuration::get('omnivalt_countrycode') . '" street="' . Configuration::get('omnivalt_address') . '" />
-                          
+
                           </returnAddressee>';
       $xmlRequest .= '</item>';
     endfor;
@@ -1003,7 +1039,7 @@ class OmnivaltShipping extends CarrierModule
               <xsd:businessToClientMsgRequest>
                  <partner>' . Configuration::get('omnivalt_api_user') . '</partner>
                  <interchange msg_type="info11">
-                    <header file_id="' . \Date('YmdHms') . '" sender_cd="' . Configuration::get('omnivalt_api_user') . '" >                
+                    <header file_id="' . \Date('YmdHms') . '" sender_cd="' . Configuration::get('omnivalt_api_user') . '" >
                     </header>
                     <item_list>
                       ';
@@ -1023,7 +1059,7 @@ class OmnivaltShipping extends CarrierModule
                              <!--Optional:-->
                              <phone>' . Configuration::get('omnivalt_phone') . '</phone>
                              <address postcode="' . Configuration::get('omnivalt_postcode') . '" deliverypoint="' . Configuration::get('omnivalt_city') . '" country="' . Configuration::get('omnivalt_countrycode') . '" street="' . Configuration::get('omnivalt_address') . '" />
-                          
+
                           </returnAddressee>';
       $xmlRequest .= '
                           <onloadAddressee>
