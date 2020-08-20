@@ -746,12 +746,6 @@ class OmnivaPatcher
     }
 }
 
-$patcher = new OmnivaPatcher();
-$patcher->install();
-$patcher->startUpdate();
-
-die('done');
-
 // Direct access for a first time install
 if (!defined('_PS_VERSION_') && !file_exists('patcher_installed')) {
     $patcher = new OmnivaPatcher();
