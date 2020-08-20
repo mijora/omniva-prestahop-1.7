@@ -181,6 +181,7 @@ class OmnivaltshippingOmnivaltadminajaxModuleFrontController extends ModuleFront
             }
             $this->_module->changeOrderStatus($orderId, $this->_module->getCustomOrderState());
             $pagecount = $pdf->setSourceFile($label_url);
+            if (file_exists($label_url)) { unlink($label_url); }
             /*for ($i = 1; $i <= $pagecount; $i++) {
               $tplidx = $pdf->ImportPage($i);
               $s = $pdf->getTemplatesize($tplidx);
@@ -212,7 +213,7 @@ if( $this->labelsMix >= 4) {
   $this->labelsMix++;
 /*-------------------------------------*/
           }}
-        $pdf->Output('Omnivalt_labels.pdf');
+        $pdf->Output('Omnivalt_labels.pdf', 'I');
     }
     public function setOmnivaOrder($id_order = '')
     {

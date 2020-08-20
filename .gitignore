@@ -1,1 +1,4 @@
 .DS_Store
+/patches
+/temp_patch
+**/*.log
