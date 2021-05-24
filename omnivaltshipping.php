@@ -756,6 +756,7 @@ class OmnivaltShipping extends CarrierModule
     $address = Db::getInstance()->getRow($sql);
 
     $address['iso_code'] = (!empty($address['iso_code'])) ? $address['iso_code'] : Configuration::get('PS_LANG_DEFAULT');
+    $address['postcode'] = (isset($address['postcode'])) ? $address['postcode'] : '';
 
     $showMap = Configuration::get('omnivalt_map');
     $this->context->smarty->assign(array(
