@@ -259,6 +259,9 @@ if( $this->labelsMix >= 4) {
     protected function printBulkManifests(){
         global $cookie;
         require_once(_PS_MODULE_DIR_.'omnivaltshipping/tcpdf/tcpdf.php');
+
+        $lang = Configuration::get('omnivalt_manifest_lang');
+        if (empty($lang)) $lang = 'en';
         $orderIds = trim($_REQUEST['order_ids'],',');
         $orderIds = explode(',',$orderIds);
         OmnivaltShipping::checkForClass('OrderInfo');
@@ -334,19 +337,19 @@ if( $this->labelsMix >= 4) {
         
         $shop_country = new Country(Country::getByIso(Configuration::get('omnivalt_countrycode')));
         
-        $shop_addr = '<table cellspacing="0" cellpadding="1" border="0"><tr><td>'.date('Y-m-d H:i:s').'</td><td>Siuntėjo adresas:<br/>'.Configuration::get('omnivalt_company').'<br/>'.Configuration::get('omnivalt_address').', '.Configuration::get('omnivalt_postcode').'<br/>'.Configuration::get('omnivalt_city').', '.$shop_country->name[$id_lang].'<br/></td></tr></table>';
+        $shop_addr = '<table cellspacing="0" cellpadding="1" border="0"><tr><td>'.date('Y-m-d H:i:s').'</td><td>'.OmnivaltShipping::getTranslate('Sender address',$lang).':<br/>'.Configuration::get('omnivalt_company').'<br/>'.Configuration::get('omnivalt_address').', '.Configuration::get('omnivalt_postcode').'<br/>'.Configuration::get('omnivalt_city').', '.$shop_country->name[$id_lang].'<br/></td></tr></table>';
        
         $pdf->writeHTML($shop_addr, true, false, false, false, '');
         $tbl = '
         <table cellspacing="0" cellpadding="4" border="1">
           <thead>
             <tr>
-              <th width = "40" align="right">Nr.</th>
-              <th>Siuntos numeris</th>
-              <th width = "60">Data</th>
-              <th width = "40" >Kiekis</th>
-              <th width = "60">Svoris (kg)</th>
-              <th width = "210">Gavėjo adresas</th>
+              <th width = "40" align="right">'.OmnivaltShipping::getTranslate('No.',$lang).'</th>
+              <th>'.OmnivaltShipping::getTranslate('Shipment number',$lang).'</th>
+              <th width = "60">'.OmnivaltShipping::getTranslate('Date',$lang).'</th>
+              <th width = "40">'.OmnivaltShipping::getTranslate('Amount',$lang).'</th>
+              <th width = "60">'.OmnivaltShipping::getTranslate('Weight (kg)',$lang).'</th>
+              <th width = "210">'.OmnivaltShipping::getTranslate('Recipient address',$lang).'</th>
             </tr>
           </thead>
           <tbody>
@@ -357,8 +360,8 @@ if( $this->labelsMix >= 4) {
         $pdf->SetFont('freeserif', '', 9);
         $pdf->writeHTML($tbl, true, false, false, false, '');
         $pdf->SetFont('freeserif', '', 14);
-        $sign = 'Kurjerio vardas, pavardė, parašas ________________________________________________<br/><br/>';
-        $sign .= 'Siuntėjo vardas, pavardė, parašas ________________________________________________';
+        $sign = OmnivaltShipping::getTranslate('Courier name, surname, signature',$lang) . ' ________________________________________________<br/><br/>';
+        $sign .= OmnivaltShipping::getTranslate('Sender name, surname, signature',$lang) . ' ________________________________________________';
         $pdf->writeHTML($sign, true, false, false, false, '');
         $pdf->Output('Omnivalt_manifest.pdf','I');  
         

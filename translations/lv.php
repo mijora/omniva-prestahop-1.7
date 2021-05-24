@@ -2,6 +2,17 @@
 
 global $_MODULE;
 $_MODULE = array();
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_0c7b5040f05ce016c980797f78f6838b'] = 'Omniva pristatymas';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_609d0649141bdfbe60335a8dfe05ea83'] = 'Omniva pristatymo modulis';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_7d06182c98480873fd25664fb3f7a698'] = 'Sūtītāja adrese';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_fbd39fe0ecd01afaf01ea1957ef4a57c'] = 'Nr.';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_6f7647143e97fc8ae08ffb382bf5877e'] = 'Sūtījuma numurs';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_44749712dbec183e983dcd78a7736c41'] = 'Datums';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_b2f40690858b404ed10e62bdf422c704'] = 'Daudzums';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_91721604210524b7051d99c4c8478715'] = 'Svars (kg)';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_55d19814eae4e666eab87d90fa19fc4b'] = 'Saņēmēja adrese';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_fba6c077471e001d8b46bb6c1b40c52c'] = 'Kurjera vārds, uzvārds, paraksts';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_c711217d6526ad5add448c7b6268cf99'] = 'Sūtītāja vārds, uzvārds, paraksts';
 $_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_876f23178c29dc2552c0b48bf23cd9bd'] = 'Vai tiešām vēlaties atinstalēt?';
 $_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_a11bab71256bab70c82c11a2a48f493f'] = 'Lūdzu, izveidojiet moduli';
 $_MODULE['<{omnivaltshipping}prestashop>omnivaltshipping_bdd94fedfcc5acb861358dd7138634a1'] = 'Omniva pasūtījumi';
@@ -40,6 +51,15 @@ $_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_fbd971d70423f06c25c4b1
 $_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_d9dfda0b6b0767366b110a68e40692ef'] = 'Pasūtījuma informācija nav saglabāta. Lūdzu, saglabājiet pirms etiķetes ģenerēšanas';
 $_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_559f67693e0521a2e7a3f26c3a33d59a'] = 'Problēmas ar etiķešu skaitu, lūdzu, izvēlieties vienu pasūtījumu !!!';
 $_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_58e6ba259b4f4e265b2c60822ee800a2'] = 'Šeit nav nekas izdrukāt !!!';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_7d06182c98480873fd25664fb3f7a698'] = 'Sūtītāja adrese';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_fbd39fe0ecd01afaf01ea1957ef4a57c'] = 'Nr.';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_6f7647143e97fc8ae08ffb382bf5877e'] = 'Sūtījuma numurs';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_44749712dbec183e983dcd78a7736c41'] = 'Datums';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_b2f40690858b404ed10e62bdf422c704'] = 'Daudzums';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_91721604210524b7051d99c4c8478715'] = 'Svars (kg)';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_55d19814eae4e666eab87d90fa19fc4b'] = 'Saņēmēja adrese';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_fba6c077471e001d8b46bb6c1b40c52c'] = 'Kurjera vārds, uzvārds, paraksts';
+$_MODULE['<{omnivaltshipping}prestashop>omnivaltadminajax_c711217d6526ad5add448c7b6268cf99'] = 'Sūtītāja vārds, uzvārds, paraksts';
 $_MODULE['<{omnivaltshipping}prestashop>omnivaorders_bdd94fedfcc5acb861358dd7138634a1'] = 'Omniva pasūtījumi';
 $_MODULE['<{omnivaltshipping}prestashop>omnivaorders_11505d9a9a17768cbdee6054a4e27e98'] = 'Izsaucot kurjerpakalpojums';
 $_MODULE['<{omnivaltshipping}prestashop>omnivaorders_39f955a983e02682aeecdf0c94854c9b'] = 'Jauni pasūtījumi';
@@ -86,6 +106,11 @@ $_MODULE['<{omnivaltshipping}prestashop>omnivaorders0_76c3e002d3c052bd6a909366a8
 $_MODULE['<{omnivaltshipping}prestashop>omnivaorders0_72ef2b9b6965d078e3c7f95487a82d1c'] = 'Izlaist';
 $_MODULE['<{omnivaltshipping}prestashop>omnivaorders0_5c5f06440fcb85cd5c8cfafe32e34b78'] = 'Radīts';
 $_MODULE['<{omnivaltshipping}prestashop>omnivaorders0_5af186f24df84335599e0ec923669d9b'] = 'Pievienot sūtījumu sarakstam';
+$_MODULE['<{omnivaltshipping}prestashop>displaybeforecarrier_ba7db2627418d3f2e83488ddca125cd2'] = 'Apskatīt novietojumu';
+$_MODULE['<{omnivaltshipping}prestashop>trackinginfo_73e0c6ff256e6be1b9ac2236bdbd697a'] = 'Izsekošanas informācija';
+$_MODULE['<{omnivaltshipping}prestashop>trackinginfo_44749712dbec183e983dcd78a7736c41'] = 'Datums';
+$_MODULE['<{omnivaltshipping}prestashop>trackinginfo_a4ecfc70574394990cf17bd83df499f7'] = 'Pasākums';
+$_MODULE['<{omnivaltshipping}prestashop>trackinginfo_7b9cf007806ed854cd12ab800c8a982b'] = 'Vieta';
 $_MODULE['<{omnivaltshipping}prestashop>blockinorder_b2f062385cd680e6de20a414d61c0d67'] = 'Paketi';
 $_MODULE['<{omnivaltshipping}prestashop>blockinorder_8c489d0946f66d17d73f26366a4bf620'] = 'Svars';
 $_MODULE['<{omnivaltshipping}prestashop>blockinorder_b4d1403c4db49bf1b222179cca5b794f'] = 'C.O.D.';
@@ -97,7 +122,6 @@ $_MODULE['<{omnivaltshipping}prestashop>blockinorder_af5a5195fe01aae1edf7c0770e8
 $_MODULE['<{omnivaltshipping}prestashop>blockinorder_5050224de02ab60008e2fe590f0b7bea'] = 'Izveidot etiķeti';
 $_MODULE['<{omnivaltshipping}prestashop>blockinorder_165977bc8006193936272e96ef4fd7a2'] = 'Drukas etiķete';
 $_MODULE['<{omnivaltshipping}prestashop>blockinorder_a48721091a600c187f14daf610e22a32'] = 'Veiksmīgi pievienots.';
-$_MODULE['<{omnivaltshipping}prestashop>displaybeforecarrier_ba7db2627418d3f2e83488ddca125cd2'] = 'Apskatīt novietojumu';
 $_MODULE['<{omnivaltshipping}prestashop>header_ab6818405d4e2ece132a8b65c28e9bb9'] = 'Izvēlaties pakomātu';
 $_MODULE['<{omnivaltshipping}prestashop>header_dd238d9d1c8619a2c999cdc7cb674264'] = 'Ievadiet pasta indeksu/adresi';
 $_MODULE['<{omnivaltshipping}prestashop>header_d26e7830f405fcd6887d766a0ae8787b'] = 'Vieta nav atrasta';
@@ -111,7 +135,3 @@ $_MODULE['<{omnivaltshipping}prestashop>header_59f59b48d5d7ac80372c52471c2311c6'
 $_MODULE['<{omnivaltshipping}prestashop>header_ec9f1fac0b8a074f11b706dc26f426f4'] = 'Omniva pakomāti';
 $_MODULE['<{omnivaltshipping}prestashop>header_bbd99246558810170f2bbba7b75f517c'] = 'Pakomātu adreses';
 $_MODULE['<{omnivaltshipping}prestashop>header_630f6dc397fe74e52d5189e2c80f282b'] = 'Atpakaļ';
-$_MODULE['<{omnivaltshipping}prestashop>trackinginfo_73e0c6ff256e6be1b9ac2236bdbd697a'] = 'Izsekošanas informācija';
-$_MODULE['<{omnivaltshipping}prestashop>trackinginfo_44749712dbec183e983dcd78a7736c41'] = 'Datums';
-$_MODULE['<{omnivaltshipping}prestashop>trackinginfo_a4ecfc70574394990cf17bd83df499f7'] = 'Pasākums';
-$_MODULE['<{omnivaltshipping}prestashop>trackinginfo_7b9cf007806ed854cd12ab800c8a982b'] = 'Vieta';

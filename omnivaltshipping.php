@@ -30,11 +30,13 @@ class OmnivaltShipping extends CarrierModule
     'Courier' => 'omnivalt_c',
   );
 
+  private $texts = array();
+
   public function __construct()
   {
     $this->name = 'omnivaltshipping';
     $this->tab = 'shipping_logistics';
-    $this->version = '1.1.5';
+    $this->version = '1.1.6';
     $this->author = 'Omniva.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '1.8');
@@ -44,6 +46,18 @@ class OmnivaltShipping extends CarrierModule
 
     $this->displayName = $this->l('Omniva Shipping');
     $this->description = $this->l('Shipping module for Omniva carrier');
+
+    $this->texts = array(
+      $this->l('Sender address'),
+      $this->l('No.'),
+      $this->l('Shipment number'),
+      $this->l('Date'),
+      $this->l('Amount'),
+      $this->l('Weight (kg)'),
+      $this->l('Recipient address'),
+      $this->l('Courier name, surname, signature'),
+      $this->l('Sender name, surname, signature'),
+    );
 
     $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
@@ -327,7 +341,7 @@ class OmnivaltShipping extends CarrierModule
     $output = null;
 
     if (Tools::isSubmit('submit' . $this->name)) {
-      $fields = array('omnivalt_map', 'omnivalt_api_url', 'omnivalt_api_user', 'omnivalt_api_pass', 'omnivalt_send_off', 'omnivalt_bank_account', 'omnivalt_company', 'omnivalt_address', 'omnivalt_city', 'omnivalt_postcode', 'omnivalt_countrycode', 'omnivalt_phone', 'omnivalt_pick_up_time_start', 'omnivalt_pick_up_time_finish');
+      $fields = array('omnivalt_map', 'omnivalt_api_url', 'omnivalt_api_user', 'omnivalt_api_pass', 'omnivalt_send_off', 'omnivalt_bank_account', 'omnivalt_company', 'omnivalt_address', 'omnivalt_city', 'omnivalt_postcode', 'omnivalt_countrycode', 'omnivalt_phone', 'omnivalt_pick_up_time_start', 'omnivalt_pick_up_time_finish', 'omnivalt_manifest_lang');
       $values = array();
       $all_filled = true;
       foreach ($fields as $field) {
@@ -358,8 +372,25 @@ class OmnivaltShipping extends CarrierModule
 
   public function displayForm()
   {
-    // Get default language
     $default_lang = (int) Configuration::get('PS_LANG_DEFAULT');
+    $lang_options = array(
+      array(
+        'id_option' => 'en',
+        'name' => $this->l('English')
+      ),
+      array(
+        'id_option' => 'ee',
+        'name' => $this->l('Estonian') . ' (' . $this->l('English') . ')'
+      ),
+      array(
+        'id_option' => 'lv',
+        'name' => $this->l('Latvian')
+      ),
+      array(
+        'id_option' => 'lt',
+        'name' => $this->l('Lithuanian')
+      ),
+    );
     $options = array(
       array(
         'id_option' => 'pt',
@@ -491,6 +522,18 @@ class OmnivaltShipping extends CarrierModule
             )
           )
         ),
+        array(
+          'type' => 'select',
+          'lang' => true,
+          'label' => $this->l('Manifest language'),
+          'name' => 'omnivalt_manifest_lang',
+          'required' => false,
+          'options' => array(
+            'query' => $lang_options,
+            'id' => 'id_option',
+            'name' => 'name'
+          )
+        ),
       ),
       'submit' => array(
         'title' => $this->l('Save'),
@@ -565,6 +608,7 @@ class OmnivaltShipping extends CarrierModule
     $helper->fields_value['omnivalt_pick_up_time_start'] = Configuration::get('omnivalt_pick_up_time_start') ? Configuration::get('omnivalt_pick_up_time_start') : '8:00';
     $helper->fields_value['omnivalt_pick_up_time_finish'] = Configuration::get('omnivalt_pick_up_time_finish') ? Configuration::get('omnivalt_pick_up_time_finish') : '17:00';
     $helper->fields_value['omnivalt_map'] = Configuration::get('omnivalt_map');
+    $helper->fields_value['omnivalt_manifest_lang'] = Configuration::get('omnivalt_manifest_lang') ? Configuration::get('omnivalt_manifest_lang') : 'en';
     return $helper->generateForm($fields_form);
   }
   
@@ -648,6 +692,26 @@ class OmnivaltShipping extends CarrierModule
     return $terminalsList;
   }
 
+  public static function getTranslate($string,$iso_lang='lt',$source='',$js=false)
+  {
+    $mainClass = new OmnivaltShipping();
+    if (empty($source)) $source = $mainClass->name;
+    $file = dirname(__FILE__).'/translations/'.$iso_lang.'.php';
+    if(!file_exists($file)) return $string;
+    include($file);
+    $key = md5(str_replace('\'', '\\\'', $string));
+    $current_key = strtolower('<{'.$mainClass->name.'}'._THEME_NAME_.'>'.$source).'_'.$key;
+    $default_key = strtolower('<{'.$mainClass->name.'}prestashop>'.$source).'_'.$key;
+    $ret = $string;
+    if (isset($_MODULE[$current_key]))
+      $ret = stripslashes($_MODULE[$current_key]);
+    elseif (isset($_MODULE[$default_key]))
+      $ret = stripslashes($_MODULE[$default_key]);
+    if ($js)
+      $ret = addslashes($ret);
+    return $ret;
+  }
+
   public static function getTerminalAddress($code)
   {
     $terminals_json_file_dir = dirname(__file__) . "/locations.json";
@@ -690,6 +754,9 @@ class OmnivaltShipping extends CarrierModule
     }
     $sql = 'SELECT a.*, c.iso_code FROM ' . _DB_PREFIX_ . 'address AS a LEFT JOIN ' . _DB_PREFIX_ . 'country AS c ON c.id_country = a.id_country WHERE id_address="' . $params['cart']->id_address_delivery . '"';
     $address = Db::getInstance()->getRow($sql);
+
+    $address['iso_code'] = (!empty($address['iso_code'])) ? $address['iso_code'] : Configuration::get('PS_LANG_DEFAULT');
+    $address['postcode'] = (isset($address['postcode'])) ? $address['postcode'] : '';
 
     $showMap = Configuration::get('omnivalt_map');
     $this->context->smarty->assign(array(
