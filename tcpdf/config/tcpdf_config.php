@@ -79,7 +79,7 @@
 /**
  * Cache directory for temporary files (full path).
  */
-//define ('K_PATH_CACHE', '/tmp/');
+define ('K_PATH_CACHE', dirname(__FILE__).'/../tmp/');
 
 /**
  * Generic name for a blank image.
