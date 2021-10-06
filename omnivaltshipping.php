@@ -341,12 +341,13 @@ class OmnivaltShipping extends CarrierModule
     $output = null;
 
     if (Tools::isSubmit('submit' . $this->name)) {
-      $fields = array('omnivalt_map', 'omnivalt_api_url', 'omnivalt_api_user', 'omnivalt_api_pass', 'omnivalt_send_off', 'omnivalt_bank_account', 'omnivalt_company', 'omnivalt_address', 'omnivalt_city', 'omnivalt_postcode', 'omnivalt_countrycode', 'omnivalt_phone', 'omnivalt_pick_up_time_start', 'omnivalt_pick_up_time_finish', 'omnivalt_manifest_lang');
+      $fields = array('omnivalt_map', 'omnivalt_api_url', 'omnivalt_api_user', 'omnivalt_api_pass', 'omnivalt_send_off', 'omnivalt_bank_account', 'omnivalt_company', 'omnivalt_address', 'omnivalt_city', 'omnivalt_postcode', 'omnivalt_countrycode', 'omnivalt_phone', 'omnivalt_pick_up_time_start', 'omnivalt_pick_up_time_finish', 'omnivalt_print_type', 'omnivalt_manifest_lang');
+      $not_required = array('omnivalt_bank_account');
       $values = array();
       $all_filled = true;
       foreach ($fields as $field) {
         $values[$field] = strval(Tools::getValue($field));
-        if ($values[$field] == '') {
+        if ($values[$field] == '' && !in_array($field, $not_required)) {
           $all_filled = false;
         }
       }
@@ -401,6 +402,17 @@ class OmnivaltShipping extends CarrierModule
         'name' => $this->l('Courier')
       ),
     );
+    $print_options = array(
+      array(
+        'id_option' => 'single',
+        'name' => $this->l('Original (single label)')
+      ),
+      array(
+        'id_option' => 'four',
+        'name' => $this->l('A4 (4 labels)')
+      ),
+    );
+
     // Init Fields form array
     $fields_form[0]['form'] = array(
       'legend' => array(
@@ -440,7 +452,7 @@ class OmnivaltShipping extends CarrierModule
           'label' => $this->l('Bank account'),
           'name' => 'omnivalt_bank_account',
           'size' => 20,
-          'required' => true
+          'required' => false
         ),
         array(
           'type' => 'text',
@@ -520,6 +532,18 @@ class OmnivaltShipping extends CarrierModule
               'value' => 0,
               'label' => $this->l('Disabled')
             )
+          )
+        ),
+        array(
+          'type' => 'select',
+          'lang' => true,
+          'label' => $this->l('Labels print type'),
+          'name' => 'omnivalt_print_type',
+          'required' => false,
+          'options' => array(
+            'query' => $print_options,
+            'id' => 'id_option',
+            'name' => 'name'
           )
         ),
         array(
@@ -608,6 +632,7 @@ class OmnivaltShipping extends CarrierModule
     $helper->fields_value['omnivalt_pick_up_time_start'] = Configuration::get('omnivalt_pick_up_time_start') ? Configuration::get('omnivalt_pick_up_time_start') : '8:00';
     $helper->fields_value['omnivalt_pick_up_time_finish'] = Configuration::get('omnivalt_pick_up_time_finish') ? Configuration::get('omnivalt_pick_up_time_finish') : '17:00';
     $helper->fields_value['omnivalt_map'] = Configuration::get('omnivalt_map');
+    $helper->fields_value['omnivalt_print_type'] = Configuration::get('omnivalt_print_type') ? Configuration::get('omnivalt_print_type') : 'four';
     $helper->fields_value['omnivalt_manifest_lang'] = Configuration::get('omnivalt_manifest_lang') ? Configuration::get('omnivalt_manifest_lang') : 'en';
     return $helper->generateForm($fields_form);
   }
@@ -871,7 +896,8 @@ class OmnivaltShipping extends CarrierModule
   {
     $company = Configuration::get('omnivalt_company');
     $bank_account = Configuration::get('omnivalt_bank_account');
-
+    if ($cod && empty($bank_account)) die('Empty bank account in Omniva module settings');
+    
     //if($order->module == 'cashondelivery' && $cod) {
     if ($cod) {
       return '<monetary_values>
@@ -917,7 +943,7 @@ class OmnivaltShipping extends CarrierModule
     $order = new Order((int) $id_order['id_order']);
     $cart = new Cart((int) $order->id_cart);
     $return = '';
-    if ($order->id_carrier == Configuration::get('omnivalt_pt') || $order->id_carrier == Configuration::get('omnivalt_c') || 1 == 1) { // always true
+    if ($order->id_carrier == Configuration::get('omnivalt_pt') || $order->id_carrier == Configuration::get('omnivalt_c')) {
       $terminal_id = $cart->omnivalt_terminal;
       $label_url = '';
 
