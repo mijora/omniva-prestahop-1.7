@@ -159,7 +159,12 @@ class OmnivaltshippingOmnivaltadminajaxModuleFrontController extends ModuleFront
               } else {
                 $orderInfoObj->saveError($orderId,addslashes($status['msg']));
                 $this->_module->changeOrderStatus($orderId, $this->_module->getErrorOrderState());
-                continue;
+                if (count($orderIds) > 1) {
+                  continue;
+                } else {
+                  echo $status['msg'];
+                  exit();
+                }
               }
             }
             $label_url = '';
@@ -182,37 +187,40 @@ class OmnivaltshippingOmnivaltadminajaxModuleFrontController extends ModuleFront
             $this->_module->changeOrderStatus($orderId, $this->_module->getCustomOrderState());
             $pagecount = $pdf->setSourceFile($label_url);
             if (file_exists($label_url)) { unlink($label_url); }
-            /*for ($i = 1; $i <= $pagecount; $i++) {
-              $tplidx = $pdf->ImportPage($i);
-              $s = $pdf->getTemplatesize($tplidx);
-              $pdf->AddPage('P', array($s['w'], $s['h']));
-              $pdf->useTemplate($tplidx);  
+
+            $print_type = Configuration::get('omnivalt_print_type');
+            if ($print_type === 'single') {
+              for ($i = 1; $i <= $pagecount; $i++) {
+                $tplidx = $pdf->ImportPage($i);
+                $s = $pdf->getTemplatesize($tplidx);
+                $pdf->AddPage('P', array($s['width'], $s['height']));
+                $pdf->useTemplate($tplidx);  
+              }
+            } else {
+              $newPG = array(0,4,8,12,16,20,24,28,32);
+              if ( $this->labelsMix >= 4) {
+                $pdf->AddPage();
+                $page = 1;
+                $templateId = $pdf->importPage($page);
+                $this->labelsMix = 0;
+              }
+              $tplidx = $pdf->ImportPage(1);
+              if ($this->labelsMix == 0) {
+                $pdf->useTemplate($tplidx, 5, 15, 94.5, 108, false);
+              } else if ($this->labelsMix == 1) {
+                $pdf->useTemplate($tplidx, 110, 15, 94.5, 108, false);
+              } else if ($this->labelsMix == 2) {
+                $pdf->useTemplate($tplidx, 5, 160, 94.5, 108, false);  
+              } else if ($this->labelsMix == 3) {
+                $pdf->useTemplate($tplidx, 110, 160, 94.5, 108, false);  
+              } else {
+                echo $this->_module->l('Problems with labels count, please, select one order!!!');
+                exit();
+              }
+              $this->labelsMix++;
             }
-            */
-/*------------- multiple -------------------*/
-$newPG = array(0,4,8,12,16,20,24,28, 32);
-if( $this->labelsMix >= 4) {
-   $pdf->AddPage();
-   $page = 1;
-   $templateId = $pdf->importPage($page);
-   $this->labelsMix = 0;
- }
-//for ($i = 1; $i <= $pagecount; $i++) {
-  $tplidx = $pdf->ImportPage(1);
-  
-    if($this->labelsMix == 0) {
-    $pdf->useTemplate($tplidx, 5, 15, 94.5, 108, false);
-  } else if ($this->labelsMix == 1) {
-    $pdf->useTemplate($tplidx, 110, 15, 94.5, 108, false);
-  } else if ($this->labelsMix == 2) {
-    $pdf->useTemplate($tplidx, 5, 140, 94.5, 108, false);  
-  } else if ($this->labelsMix == 3) {
-    $pdf->useTemplate($tplidx, 110, 140, 94.5, 108, false);  
-  } else {echo $this->_module->l('Problems with labels count, please, select one order!!!');exit();}
-  //$pages++;
-  $this->labelsMix++;
-/*-------------------------------------*/
-          }}
+          }
+        }
         $pdf->Output('Omnivalt_labels.pdf', 'I');
     }
     public function setOmnivaOrder($id_order = '')
@@ -307,7 +315,12 @@ if( $this->labelsMix >= 4) {
               } else {
                 $orderInfoObj->saveError($orderId,addslashes($status['msg']));
                 $this->_module->changeOrderStatus($orderId, $this->_module->getErrorOrderState());
-                continue;
+                if (count($orderIds) > 1) {
+                  continue;
+                } else {
+                  echo $status['msg'];
+                  exit();
+                }
               }
             }
             $this->setOmnivaOrder($orderId);

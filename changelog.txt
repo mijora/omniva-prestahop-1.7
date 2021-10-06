@@ -1,3 +1,13 @@
+= Unreleased =
+
+# Improved
+- added a ability to change labels printing type
+- bank account number has been made optional
+
+# Fixed
+- empty PDF file when printing single label and error occurs
+- remove always true from admin order
+
 = 1.1.6 =
 
 # Improved
