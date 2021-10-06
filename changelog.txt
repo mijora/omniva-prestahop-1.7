@@ -1,4 +1,4 @@
-= Unreleased =
+= 1.1.7 =
 
 # Improved
 - added a ability to change labels printing type
