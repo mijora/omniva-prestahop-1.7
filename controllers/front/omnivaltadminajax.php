@@ -63,6 +63,7 @@ class OmnivaltshippingOmnivaltadminajaxModuleFrontController extends ModuleFront
 
         if(isset($saveResult['success'])){
           $this->_module->changeOrderStatus($orderId, $this->_module->getCustomOrderState());
+          ob_clean(); // remove possible errors from prestashop
           echo json_encode($this->_module->l('Saved')); exit();
         }
         echo json_encode($saveResult); exit();
