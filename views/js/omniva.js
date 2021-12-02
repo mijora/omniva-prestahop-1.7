@@ -21,6 +21,9 @@ var omniva_addrese_change = false;
         var terminals = omnivaTerminals;
         var selected = false;
         var previous_list = [];
+
+        defaultSort();
+
         select.hide();
         if (select.val()){
             selected = {'id':select.val(),'text':select.find('option:selected').text(),'distance':false};
@@ -290,17 +293,15 @@ var omniva_addrese_change = false;
                 
             });
     
+            defaultSort();
+        }
+
+        function defaultSort() {
             terminals.sort(function(a, b) {
-                var distOne = a[0];
-                var distTwo = b[0];
-                if (parseFloat(distOne) < parseFloat(distTwo)) {
-                    return -1;
-                }
-                if (parseFloat(distOne) > parseFloat(distTwo)) {
-                    return 1;
-                }
-                    return 0;
-            });   
+                var itemOne = a[4];
+                var itemTwo = b[4];
+                return itemOne.localeCompare(itemTwo);
+            });
         }
         
         function calculateDistance(y,x){

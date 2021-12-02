@@ -671,7 +671,8 @@ class OmnivaltShipping extends CarrierModule
         if (!isset($grouped_options[$terminal['A1_NAME']]))
           $grouped_options[(string) $terminal['A1_NAME']] = array();
         //$grouped_options[(string)$terminal['A1_NAME']][(string)$terminal['ZIP']] = $terminal['NAME'];
-        $grouped_options[(string) $terminal['A1_NAME']][(string) $terminal['ZIP']] = $terminal['NAME'] . ' (' . $terminal['A2_NAME'] . ')';
+        $address = trim($terminal['A2_NAME'] . ' ' . ($terminal['A5_NAME'] != 'NULL' ? $terminal['A5_NAME'] : '') . ' ' . ($terminal['A7_NAME'] != 'NULL' ? $terminal['A7_NAME'] : ''));
+        $grouped_options[(string) $terminal['A1_NAME']][(string) $terminal['ZIP']] = $terminal['NAME'] . ' (' . $address . ')';
       }
       ksort($grouped_options);
       foreach ($grouped_options as $city => $locs) {
@@ -955,6 +956,15 @@ class OmnivaltShipping extends CarrierModule
       $OrderInfo = new OrderInfo();
       $OrderInfo = $OrderInfo->getOrderInfo($order->id);
       $label_url = $this->context->link->getModuleLink("omnivaltshipping", "omnivaltadminajax", array("action"=>"bulklabels", "order_ids"=>$order->id));
+      
+      $error_msg = !empty($OrderInfo['error']) ? $OrderInfo['error'] : false;
+      $omniva_tpl = 'blockinorder.tpl';
+
+      if (version_compare(_PS_VERSION_, '1.7.7', '>=')) {
+        $omniva_tpl = 'blockinorder_1_7_7.tpl';
+        $error_msg = $error_msg ? $this->displayError($error_msg) : false;
+      }
+
       $this->smarty->assign(array(
         'total_weight' => isset($OrderInfo['weight']) ? $OrderInfo['weight'] : $order->getTotalWeight(),
         'packs' => isset($OrderInfo['packs']) ? $OrderInfo['packs'] : 1,
@@ -967,9 +977,10 @@ class OmnivaltShipping extends CarrierModule
         'printlabelsurl' => $this->addHttps($this->context->link->getModuleLink('omnivaltshipping', 'omnivaltadminajax', array('action' => 'printlabels'))),
         'omnivalt_parcel_terminal_carrier_id' => Configuration::get('omnivalt_pt'),
         'label_url' => $label_url,
-        'error' => $OrderInfo['error'],
+        'error' => $error_msg,
       ));
-      $form = $this->display(__FILE__, 'blockinorder.tpl');
+
+      $form = $this->display(__FILE__, $omniva_tpl);
 
       return $form;
     }
