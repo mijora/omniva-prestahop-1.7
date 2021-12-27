@@ -1,3 +1,9 @@
+= Unreleased =
+
+# Fixed
+- Default language code select in Checkout page
+- Terminal selection load in OnePage checout page
+
 = 1.1.8 =
 
 # Fixed

@@ -781,7 +781,8 @@ class OmnivaltShipping extends CarrierModule
     $sql = 'SELECT a.*, c.iso_code FROM ' . _DB_PREFIX_ . 'address AS a LEFT JOIN ' . _DB_PREFIX_ . 'country AS c ON c.id_country = a.id_country WHERE id_address="' . $params['cart']->id_address_delivery . '"';
     $address = Db::getInstance()->getRow($sql);
 
-    $address['iso_code'] = (!empty($address['iso_code'])) ? $address['iso_code'] : Configuration::get('PS_LANG_DEFAULT');
+    $language = new Language(Configuration::get('PS_LANG_DEFAULT'));
+    $address['iso_code'] = (!empty($address['iso_code'])) ? $address['iso_code'] : strtoupper($language->iso_code);
     $address['postcode'] = (isset($address['postcode'])) ? $address['postcode'] : '';
 
     $showMap = Configuration::get('omnivalt_map');
