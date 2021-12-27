@@ -726,11 +726,21 @@ var omnivaltDelivery = {
 	
 //when document is loaded...
 $(document).ready(function(){
+    launch_omniva();
+});
+
+function launch_omniva(retry = 0) {
+    if (retry >= 50) return;
+
     if ($('#omnivalt_parcel_terminal_carrier_details select').length){
         $('#omnivalt_parcel_terminal_carrier_details select').omniva({showMap: show_omniva_map});
         omnivaltDelivery.init();
         $('.delivery-options .delivery-option input[type="radio"]').on('click',function(){
             omnivaltDelivery.init();
         });
+    } else {
+        setTimeout(function() {
+            launch_omniva(retry + 1);
+        }, 200);
     }
-})
+}
