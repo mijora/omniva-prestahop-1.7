@@ -1,8 +1,11 @@
-= Unreleased =
+= 1.1.9 =
 
 # Fixed
 - Default language code select in Checkout page
 - Terminal selection load in OnePage checout page
+
+# Improved
+- Added support for new Omniva XML response namespace
 
 = 1.1.8 =
 
