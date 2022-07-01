@@ -1216,7 +1216,7 @@ class OmnivaltShipping extends CarrierModule
       $errorTitle = '';
       if (strlen(trim($xmlResponse)) > 0) {
         //echo $xmlResponse; exit;
-        $xmlResponse = str_ireplace(['SOAP-ENV:', 'SOAP:'], '', $xmlResponse);
+        $xmlResponse = str_ireplace(['SOAP-ENV:', 'SOAP:', 'ns3:'], '', $xmlResponse);
         $xml = simplexml_load_string($xmlResponse);
         if (!is_object($xml)) {
           $errors[] = $this->l('Response is in the wrong format');
@@ -1293,7 +1293,7 @@ class OmnivaltShipping extends CarrierModule
       $errors[] = $e->getMessage() . ' ' . $e->getCode();
       $xmlResponse = '';
     }
-    $xmlResponse = str_ireplace(['SOAP-ENV:', 'SOAP:'], '', $xmlResponse);
+    $xmlResponse = str_ireplace(['SOAP-ENV:', 'SOAP:', 'ns3:'], '', $xmlResponse);
     $xml = simplexml_load_string($xmlResponse);
     if (!is_object($xml)) {
       $errors[] = self::l('Response is in the wrong format');
